@@ -2,6 +2,47 @@
 
 This application was generated using JHipster 8.9.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v8.9.0](https://www.jhipster.tech/documentation-archive/v8.9.0).
 
+## READ BEFORE RUNNING
+
+### Step 1
+
+Install Docker Desktop for Windows and make sure the Docker engine is running.
+Run the following command in the parent directory to start the keycloak server.
+
+```shell
+docker compose -f src/main/docker/keycloak.yml up
+```
+
+### Step 2
+
+Create a PostgreSQL database called `disaster-app` and make sure your Postgres credentials are matching the following.
+
+```yaml
+username: postgres
+password: postgres
+```
+
+### Step 3
+
+Run the following command in the parent directory to start the application.
+
+```shell
+.\mvnw
+```
+
+### Possible errors
+
+```shell
+8:43  error  Delete ␍  prettier/prettier
+```
+
+If you encounter this error, you are using Windows-style line endings (CRLF) instead of Unix-style line endings (LF).
+You should run this command in the parent directory to make sure your IDE opens the files as expected.
+
+```shell
+npx prettier --write .
+```
+
 ## Project Structure
 
 Node is required for generation and recommended for development. `package.json` is always generated for a better development experience with prettier, commit hooks, scripts and so on.
