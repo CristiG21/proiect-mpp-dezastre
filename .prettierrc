@@ -5,10 +5,7 @@
   "useTabs": false,
   "arrowParens": "avoid",
   "bracketSameLine": false,
-  "plugins": [
-    "prettier-plugin-packagejson",
-    "prettier-plugin-java"
-  ],
+  "plugins": ["prettier-plugin-packagejson", "prettier-plugin-java"],
   "overrides": [
     {
       "files": "*.java",

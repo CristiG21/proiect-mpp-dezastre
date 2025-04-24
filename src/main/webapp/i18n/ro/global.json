@@ -10,7 +10,9 @@
         "bankAccount": "ContBancar",
         "label": "Etichetă",
         "operation": "Operație",
-        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
+        "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+        "center": "Center",
+        "centerTypeWrapper": "Center Type Wrapper"
       },
       "account": {
         "main": "Cont",

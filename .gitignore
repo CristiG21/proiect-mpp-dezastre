@@ -151,5 +151,9 @@ Desktop.ini
 ######################
 coverage/
 .nyc_output/
+<<<<<<< Updated upstream
 
-environment.js
+
+=======
+webpack/environment.js
+>>>>>>> Stashed changes

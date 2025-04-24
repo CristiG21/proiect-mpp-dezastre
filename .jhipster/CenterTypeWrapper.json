@@ -1,0 +1,27 @@
+{
+  "annotations": {
+    "changelogDate": "20250424180556"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "type",
+      "fieldType": "CenterType",
+      "fieldValues": "SHELTER,MEDICAL,FOOD,WATER,SANITATION,COMMUNICATION,TRANSPORTATION"
+    }
+  ],
+  "name": "CenterTypeWrapper",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "center",
+      "otherEntityRelationshipName": "types",
+      "relationshipName": "center",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

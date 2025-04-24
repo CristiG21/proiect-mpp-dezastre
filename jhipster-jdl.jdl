@@ -1,0 +1,28 @@
+entity Center {
+  name String,
+  longitude Double,
+  latitude Double,
+  status Boolean
+}
+
+enum CenterType {
+  SHELTER,
+  MEDICAL,
+  FOOD,
+  WATER,
+  SANITATION,
+  COMMUNICATION,
+  TRANSPORTATION
+}
+
+entity CenterTypeWrapper {
+  type CenterType
+}
+
+relationship OneToMany {
+  Center{types} to CenterTypeWrapper{center}
+}
+
+dto Center, CenterTypeWrapper with mapstruct
+paginate Center, CenterTypeWrapper with pagination
+service Center, CenterTypeWrapper with serviceClass
