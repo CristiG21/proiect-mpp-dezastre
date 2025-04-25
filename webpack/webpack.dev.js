@@ -57,6 +57,16 @@ module.exports = async options =>
           secure: false,
           changeOrigin: options.tls,
         },
+        {
+          // Proxy Mapbox API requests
+          context: ['/styles', '/geocoding', '/directions', '/mapbox'],
+          target: 'https://api.mapbox.com',
+          secure: true,
+          changeOrigin: true,
+          pathRewrite: {
+            '^/mapbox': '', // Remove '/mapbox' prefix if added in requests
+          },
+        },
       ],
       historyApiFallback: true,
     },
