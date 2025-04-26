@@ -42,9 +42,6 @@ export const Home = () => {
       zoom: 6,
     });
 
-    // Add a red marker manually
-    new mapboxgl.Marker({ color: 'red' }).setLngLat([21.3123, 46.1866]).addTo(map);
-
     // Fetch centers from API
     axios
       .get<ICenter[]>('/api/centers')
@@ -56,7 +53,9 @@ export const Home = () => {
         if (Array.isArray(centers)) {
           centers.forEach(center => {
             if (center.longitude != null && center.latitude != null) {
-              new mapboxgl.Marker().setLngLat([center.latitude, center.longitude]).addTo(map);
+              const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`<h4>${center.name}</h4>`);
+
+              const marker = new mapboxgl.Marker().setLngLat([center.latitude, center.longitude]).setPopup(popup).addTo(map);
             } else {
               setError('Invalid center coordinates received from API.');
             }
