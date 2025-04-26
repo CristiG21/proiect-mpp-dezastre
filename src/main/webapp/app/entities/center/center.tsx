@@ -127,6 +127,14 @@ export const Center = () => {
                   <Translate contentKey="disasterApp.center.status">Status</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('status')} />
                 </th>
+                <th className="hand" onClick={sort('description')}>
+                  <Translate contentKey="disasterApp.center.description">Description</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('description')} />
+                </th>
+                <th className="hand" onClick={sort('availableSeats')}>
+                  <Translate contentKey="disasterApp.center.availableSeats">Available Seats</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('availableSeats')} />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -142,6 +150,8 @@ export const Center = () => {
                   <td>{center.longitude}</td>
                   <td>{center.latitude}</td>
                   <td>{center.status ? 'true' : 'false'}</td>
+                  <td>{center.description}</td>
+                  <td>{center.availableSeats}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/center/${center.id}`} color="info" size="sm" data-cy="entityDetailsButton">

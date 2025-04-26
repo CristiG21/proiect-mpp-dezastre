@@ -34,6 +34,12 @@ public class Center implements Serializable {
     @Column(name = "status")
     private Boolean status;
 
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "available_seats")
+    private Integer availableSeats;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "center")
     @JsonIgnoreProperties(value = { "center" }, allowSetters = true)
     private Set<CenterTypeWrapper> types = new HashSet<>();
@@ -105,6 +111,32 @@ public class Center implements Serializable {
         this.status = status;
     }
 
+    public String getDescription() {
+        return this.description;
+    }
+
+    public Center description(String description) {
+        this.setDescription(description);
+        return this;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getAvailableSeats() {
+        return this.availableSeats;
+    }
+
+    public Center availableSeats(Integer availableSeats) {
+        this.setAvailableSeats(availableSeats);
+        return this;
+    }
+
+    public void setAvailableSeats(Integer availableSeats) {
+        this.availableSeats = availableSeats;
+    }
+
     public Set<CenterTypeWrapper> getTypes() {
         return this.types;
     }
@@ -164,6 +196,8 @@ public class Center implements Serializable {
             ", longitude=" + getLongitude() +
             ", latitude=" + getLatitude() +
             ", status='" + getStatus() + "'" +
+            ", description='" + getDescription() + "'" +
+            ", availableSeats=" + getAvailableSeats() +
             "}";
     }
 }

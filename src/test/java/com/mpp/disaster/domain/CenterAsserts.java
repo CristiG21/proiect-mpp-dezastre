@@ -50,7 +50,9 @@ public class CenterAsserts {
             .satisfies(a -> assertThat(a.getName()).as("check name").isEqualTo(expected.getName()))
             .satisfies(a -> assertThat(a.getLongitude()).as("check longitude").isEqualTo(expected.getLongitude()))
             .satisfies(a -> assertThat(a.getLatitude()).as("check latitude").isEqualTo(expected.getLatitude()))
-            .satisfies(a -> assertThat(a.getStatus()).as("check status").isEqualTo(expected.getStatus()));
+            .satisfies(a -> assertThat(a.getStatus()).as("check status").isEqualTo(expected.getStatus()))
+            .satisfies(a -> assertThat(a.getDescription()).as("check description").isEqualTo(expected.getDescription()))
+            .satisfies(a -> assertThat(a.getAvailableSeats()).as("check availableSeats").isEqualTo(expected.getAvailableSeats()));
     }
 
     /**

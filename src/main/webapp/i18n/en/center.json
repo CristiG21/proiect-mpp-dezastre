@@ -22,6 +22,8 @@
       "longitude": "Longitude",
       "latitude": "Latitude",
       "status": "Status",
+      "description": "Description",
+      "availableSeats": "Available Seats",
       "types": "Types"
     }
   }
