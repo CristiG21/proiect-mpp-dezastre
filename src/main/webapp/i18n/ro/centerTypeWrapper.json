@@ -1,0 +1,25 @@
+{
+  "disasterApp": {
+    "centerTypeWrapper": {
+      "home": {
+        "title": "Center Type Wrappers",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Creeare o nouă entitate Center Type Wrapper",
+        "createOrEditLabel": "Creeare sau editare Center Type Wrapper",
+        "notFound": "No Center Type Wrappers found"
+      },
+      "created": "A fost creată o nouă entitate Center Type Wrapper cu identificatorul {{ param }}",
+      "updated": "Center Type Wrapper cu identificatorul {{ param }} a fost actualizată",
+      "deleted": "Center Type Wrapper cu identificatorul {{ param }} a fost ștearsă",
+      "delete": {
+        "question": "Sunteți sigur că doriți să ștergeți Center Type Wrapper {{ id }}?"
+      },
+      "detail": {
+        "title": "Center Type Wrapper"
+      },
+      "id": "ID",
+      "type": "Type",
+      "center": "Center"
+    }
+  }
+}

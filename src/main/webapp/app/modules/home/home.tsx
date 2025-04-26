@@ -9,14 +9,17 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 
 import { REDIRECT_URL, getLoginUrl } from 'app/shared/util/url-utils';
 import { useAppSelector } from 'app/config/store';
+import axios from 'axios';
+import { ICenter } from 'app/shared/model/center.model';
 
 mapboxgl.accessToken = MAPBOX_KEY!;
 
 export const Home = () => {
+  const [error, setError] = useState<string | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const account = useAppSelector(state => state.authentication.account);
   const pageLocation = useLocation();
   const navigate = useNavigate();
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const redirectURL = localStorage.getItem(REDIRECT_URL);
@@ -27,6 +30,11 @@ export const Home = () => {
   }, []);
 
   useEffect(() => {
+    if (!mapContainerRef.current) {
+      setError('Map container is not available.');
+      return;
+    }
+
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/streets-v11',
@@ -34,13 +42,42 @@ export const Home = () => {
       zoom: 6,
     });
 
-    new mapboxgl.Marker().setLngLat([21.3123, 46.1866]).addTo(map);
+    // Add a red marker manually
+    new mapboxgl.Marker({ color: 'red' }).setLngLat([21.3123, 46.1866]).addTo(map);
 
-    return () => map.remove();
+    // Fetch centers from API
+    axios
+      .get<ICenter[]>('/api/centers')
+      .then(response => {
+        console.error('API response:', response.data); // Log to check the actual response
+
+        const centers = response.data; // The returned data is now a plain array
+
+        if (Array.isArray(centers)) {
+          centers.forEach(center => {
+            if (center.longitude != null && center.latitude != null) {
+              new mapboxgl.Marker().setLngLat([center.latitude, center.longitude]).addTo(map);
+            } else {
+              setError('Invalid center coordinates received from API.');
+            }
+          });
+        } else {
+          setError('API response is not an array.');
+        }
+      })
+      .catch(fetchError => {
+        console.error(fetchError);
+        setError('Error fetching centers from the API.');
+      });
+
+    return () => map.remove(); // Cleanup map on unmount
   }, []);
 
   return (
     <div>
+      {error && (
+        <Alert color="danger">{error}</Alert> // ✅ show errors if any
+      )}
       <div ref={mapContainerRef} style={{ width: '100%', height: '80vh', borderRadius: '12px' }} />
     </div>
   );

@@ -1,0 +1,25 @@
+{
+  "disasterApp": {
+    "centerTypeWrapper": {
+      "home": {
+        "title": "Center Type Wrappers",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Center Type Wrapper",
+        "createOrEditLabel": "Create or edit a Center Type Wrapper",
+        "notFound": "No Center Type Wrappers found"
+      },
+      "created": "A new Center Type Wrapper is created with identifier {{ param }}",
+      "updated": "A Center Type Wrapper is updated with identifier {{ param }}",
+      "deleted": "A Center Type Wrapper is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Center Type Wrapper {{ id }}?"
+      },
+      "detail": {
+        "title": "Center Type Wrapper"
+      },
+      "id": "ID",
+      "type": "Type",
+      "center": "Center"
+    }
+  }
+}

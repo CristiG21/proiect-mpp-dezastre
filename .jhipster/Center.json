@@ -1,0 +1,38 @@
+{
+  "annotations": {
+    "changelogDate": "20250424180555"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "longitude",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "latitude",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "Boolean"
+    }
+  ],
+  "name": "Center",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "centerTypeWrapper",
+      "otherEntityRelationshipName": "center",
+      "relationshipName": "types",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

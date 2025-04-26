@@ -1,0 +1,14 @@
+{
+  "disasterApp": {
+    "CenterType": {
+      "null": "",
+      "SHELTER": "SHELTER",
+      "MEDICAL": "MEDICAL",
+      "FOOD": "FOOD",
+      "WATER": "WATER",
+      "SANITATION": "SANITATION",
+      "COMMUNICATION": "COMMUNICATION",
+      "TRANSPORTATION": "TRANSPORTATION"
+    }
+  }
+}
