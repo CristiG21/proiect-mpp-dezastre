@@ -1,10 +1,75 @@
-/* ==========================================================================
-Main page styles
-========================================================================== */
 .hipster {
   display: inline-block;
   width: 100%;
   height: 497px;
   background: url('/content/images/jhipster_family_member_0.svg') no-repeat center top;
   background-size: contain;
+}
+
+/* ==========================================================================
+Animations
+========================================================================== */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ==========================================================================
+Mapbox Popup Custom Styling
+========================================================================== */
+.mapboxgl-popup-content {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px 12px 20px; /* 🔥 more padding-top, normal padding-bottom */
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  min-width: 100px;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+.mapboxgl-popup-content .text-wrapper {
+  margin-top: 10px; /* Adjust this to control how much you want to lower the text */
+}
+
+/* Move X to the absolute top-right corner */
+.mapboxgl-popup-close-button {
+  position: absolute;
+  top: 10px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  font-size: 18px;
+  color: #333;
+  cursor: pointer;
+}
+
+/* Hide the default Mapbox arrow */
+.mapboxgl-popup-tip {
+  display: none;
+}
+
+/* Custom arrow below the popup */
+.mapboxgl-popup-content::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 10px solid white;
 }

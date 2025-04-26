@@ -47,6 +47,12 @@ class CenterResourceIT {
     private static final Boolean DEFAULT_STATUS = false;
     private static final Boolean UPDATED_STATUS = true;
 
+    private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
+    private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
+
+    private static final Integer DEFAULT_AVAILABLE_SEATS = 1;
+    private static final Integer UPDATED_AVAILABLE_SEATS = 2;
+
     private static final String ENTITY_API_URL = "/api/centers";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -79,7 +85,13 @@ class CenterResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Center createEntity() {
-        return new Center().name(DEFAULT_NAME).longitude(DEFAULT_LONGITUDE).latitude(DEFAULT_LATITUDE).status(DEFAULT_STATUS);
+        return new Center()
+            .name(DEFAULT_NAME)
+            .longitude(DEFAULT_LONGITUDE)
+            .latitude(DEFAULT_LATITUDE)
+            .status(DEFAULT_STATUS)
+            .description(DEFAULT_DESCRIPTION)
+            .availableSeats(DEFAULT_AVAILABLE_SEATS);
     }
 
     /**
@@ -89,7 +101,13 @@ class CenterResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Center createUpdatedEntity() {
-        return new Center().name(UPDATED_NAME).longitude(UPDATED_LONGITUDE).latitude(UPDATED_LATITUDE).status(UPDATED_STATUS);
+        return new Center()
+            .name(UPDATED_NAME)
+            .longitude(UPDATED_LONGITUDE)
+            .latitude(UPDATED_LATITUDE)
+            .status(UPDATED_STATUS)
+            .description(UPDATED_DESCRIPTION)
+            .availableSeats(UPDATED_AVAILABLE_SEATS);
     }
 
     @BeforeEach
@@ -162,7 +180,9 @@ class CenterResourceIT {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].longitude").value(hasItem(DEFAULT_LONGITUDE)))
             .andExpect(jsonPath("$.[*].latitude").value(hasItem(DEFAULT_LATITUDE)))
-            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS)));
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS)))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
+            .andExpect(jsonPath("$.[*].availableSeats").value(hasItem(DEFAULT_AVAILABLE_SEATS)));
     }
 
     @Test
@@ -180,7 +200,9 @@ class CenterResourceIT {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.longitude").value(DEFAULT_LONGITUDE))
             .andExpect(jsonPath("$.latitude").value(DEFAULT_LATITUDE))
-            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS));
+            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS))
+            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
+            .andExpect(jsonPath("$.availableSeats").value(DEFAULT_AVAILABLE_SEATS));
     }
 
     @Test
@@ -202,7 +224,13 @@ class CenterResourceIT {
         Center updatedCenter = centerRepository.findById(center.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedCenter are not directly saved in db
         em.detach(updatedCenter);
-        updatedCenter.name(UPDATED_NAME).longitude(UPDATED_LONGITUDE).latitude(UPDATED_LATITUDE).status(UPDATED_STATUS);
+        updatedCenter
+            .name(UPDATED_NAME)
+            .longitude(UPDATED_LONGITUDE)
+            .latitude(UPDATED_LATITUDE)
+            .status(UPDATED_STATUS)
+            .description(UPDATED_DESCRIPTION)
+            .availableSeats(UPDATED_AVAILABLE_SEATS);
         CenterDTO centerDTO = centerMapper.toDto(updatedCenter);
 
         restCenterMockMvc
@@ -324,7 +352,13 @@ class CenterResourceIT {
         Center partialUpdatedCenter = new Center();
         partialUpdatedCenter.setId(center.getId());
 
-        partialUpdatedCenter.name(UPDATED_NAME).longitude(UPDATED_LONGITUDE).latitude(UPDATED_LATITUDE).status(UPDATED_STATUS);
+        partialUpdatedCenter
+            .name(UPDATED_NAME)
+            .longitude(UPDATED_LONGITUDE)
+            .latitude(UPDATED_LATITUDE)
+            .status(UPDATED_STATUS)
+            .description(UPDATED_DESCRIPTION)
+            .availableSeats(UPDATED_AVAILABLE_SEATS);
 
         restCenterMockMvc
             .perform(

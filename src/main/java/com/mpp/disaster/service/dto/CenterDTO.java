@@ -19,6 +19,10 @@ public class CenterDTO implements Serializable {
 
     private Boolean status;
 
+    private String description;
+
+    private Integer availableSeats;
+
     public Long getId() {
         return id;
     }
@@ -59,6 +63,22 @@ public class CenterDTO implements Serializable {
         this.status = status;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getAvailableSeats() {
+        return availableSeats;
+    }
+
+    public void setAvailableSeats(Integer availableSeats) {
+        this.availableSeats = availableSeats;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -89,6 +109,8 @@ public class CenterDTO implements Serializable {
             ", longitude=" + getLongitude() +
             ", latitude=" + getLatitude() +
             ", status='" + getStatus() + "'" +
+            ", description='" + getDescription() + "'" +
+            ", availableSeats=" + getAvailableSeats() +
             "}";
     }
 }

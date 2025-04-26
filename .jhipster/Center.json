@@ -20,6 +20,16 @@
     {
       "fieldName": "status",
       "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String",
+      "fieldValidateRules": []
+    },
+    {
+      "fieldName": "availableSeats",
+      "fieldType": "Integer",
+      "fieldValidateRules": []
     }
   ],
   "name": "Center",

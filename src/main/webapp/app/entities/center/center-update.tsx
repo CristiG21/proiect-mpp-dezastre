@@ -49,6 +49,9 @@ export const CenterUpdate = () => {
     if (values.latitude !== undefined && typeof values.latitude !== 'number') {
       values.latitude = Number(values.latitude);
     }
+    if (values.availableSeats !== undefined && typeof values.availableSeats !== 'number') {
+      values.availableSeats = Number(values.availableSeats);
+    }
 
     const entity = {
       ...centerEntity,
@@ -116,6 +119,20 @@ export const CenterUpdate = () => {
                 data-cy="status"
                 check
                 type="checkbox"
+              />
+              <ValidatedField
+                label={translate('disasterApp.center.description')}
+                id="center-description"
+                name="description"
+                data-cy="description"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('disasterApp.center.availableSeats')}
+                id="center-availableSeats"
+                name="availableSeats"
+                data-cy="availableSeats"
+                type="text"
               />
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/center" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
