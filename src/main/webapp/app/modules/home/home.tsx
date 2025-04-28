@@ -11,7 +11,7 @@ import { REDIRECT_URL } from 'app/shared/util/url-utils';
 import { useAppSelector } from 'app/config/store';
 import axios from 'axios';
 import { ICenter } from 'app/shared/model/center.model';
-
+import * as turf from '@turf/turf';
 mapboxgl.accessToken = MAPBOX_KEY!;
 
 export const Home = () => {
@@ -41,23 +41,57 @@ export const Home = () => {
       zoom: 6,
     });
 
-    // Fetch centers from API
     axios
       .get<ICenter[]>('/api/centers')
       .then(response => {
         const centers = response.data;
 
         if (Array.isArray(centers)) {
-          centers.forEach(center => {
+          centers.forEach((center, index) => {
             if (center.longitude != null && center.latitude != null) {
               const popup = new mapboxgl.Popup({
                 offset: 40,
-                anchor: 'bottom', // Always prefer showing popup above the marker
+                anchor: 'bottom',
                 closeOnMove: false,
                 closeButton: true,
               }).setDOMContent(createPopupContent(center.name, center.id));
 
+              // Create the marker
               const marker = new mapboxgl.Marker().setLngLat([center.latitude, center.longitude]).setPopup(popup).addTo(map);
+
+              // Create a 10km radius circle using Turf.js
+              const circle = turf.circle([center.latitude, center.longitude], 10, {
+                steps: 64,
+                units: 'kilometers',
+              });
+
+              // Add circle as a source
+              map.addSource(`circle-source-${index}`, {
+                type: 'geojson',
+                data: circle,
+              });
+
+              // Add circle as a fill layer
+              map.addLayer({
+                id: `circle-fill-${index}`,
+                type: 'fill',
+                source: `circle-source-${index}`,
+                paint: {
+                  'fill-color': 'red',
+                  'fill-opacity': 0.3,
+                },
+              });
+
+              // Optional: add a circle border (outline)
+              map.addLayer({
+                id: `circle-outline-${index}`,
+                type: 'line',
+                source: `circle-source-${index}`,
+                paint: {
+                  'line-color': 'red',
+                  'line-width': 2,
+                },
+              });
             } else {
               console.error('Invalid center coordinates:', center);
               setError('Invalid center coordinates received from API.');
