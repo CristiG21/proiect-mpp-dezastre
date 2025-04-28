@@ -11,6 +11,7 @@ import PrivateRoute from 'app/shared/auth/private-route';
 import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
 import PageNotFound from 'app/shared/error/page-not-found';
 import { AUTHORITIES } from 'app/config/constants';
+import CenterDetail from 'app/modules/center/center-detail';
 
 const loading = <div>loading ...</div>;
 
@@ -18,12 +19,19 @@ const Admin = Loadable({
   loader: () => import(/* webpackChunkName: "administration" */ 'app/modules/administration'),
   loading: () => loading,
 });
+
 const AppRoutes = () => {
   return (
     <div className="view-routes">
       <ErrorBoundaryRoutes>
         <Route index element={<Home />} />
         <Route path="logout" element={<Logout />} />
+        <Route path="sign-in" element={<LoginRedirect />} />
+
+        {/* Center Details Route */}
+        <Route path="center/:id" element={<CenterDetail />} />
+
+        {/* Admin Routes */}
         <Route
           path="admin/*"
           element={
@@ -32,7 +40,8 @@ const AppRoutes = () => {
             </PrivateRoute>
           }
         />
-        <Route path="sign-in" element={<LoginRedirect />} />
+
+        {/* Entities and fallback */}
         <Route
           path="*"
           element={
@@ -41,6 +50,8 @@ const AppRoutes = () => {
             </PrivateRoute>
           }
         />
+
+        {/* 404 Page */}
         <Route path="*" element={<PageNotFound />} />
       </ErrorBoundaryRoutes>
     </div>

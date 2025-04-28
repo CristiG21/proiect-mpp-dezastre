@@ -56,7 +56,7 @@ export const Home = () => {
                 anchor: 'bottom', // Always prefer showing popup above the marker
                 closeOnMove: false,
                 closeButton: true,
-              }).setDOMContent(createPopupContent(center.name));
+              }).setDOMContent(createPopupContent(center.name, center.id));
 
               const marker = new mapboxgl.Marker().setLngLat([center.latitude, center.longitude]).setPopup(popup).addTo(map);
             } else {
@@ -77,12 +77,26 @@ export const Home = () => {
   }, []);
 
   // Create popup content with custom styling
-  const createPopupContent = (name: string): HTMLElement => {
+  const createPopupContent = (name: string, centerId: number): HTMLElement => {
     const content = document.createElement('div');
+    content.classList.add('popup-content');
+
     const textWrapper = document.createElement('div');
     textWrapper.classList.add('text-wrapper');
     textWrapper.innerText = name;
     content.appendChild(textWrapper);
+
+    const button = document.createElement('button');
+    button.innerText = 'View Details';
+    button.classList.add('popup-button');
+
+    // When clicking the button, navigate to the details page
+    button.onclick = () => {
+      window.location.href = `/center/${centerId}`;
+    };
+
+    content.appendChild(button);
+
     return content;
   };
 
