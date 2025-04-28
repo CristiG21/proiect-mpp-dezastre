@@ -20,7 +20,6 @@ export const Home = () => {
   const account = useAppSelector(state => state.authentication.account);
   const pageLocation = useLocation();
   const navigate = useNavigate();
-
   useEffect(() => {
     const redirectURL = localStorage.getItem(REDIRECT_URL);
     if (redirectURL) {
@@ -66,6 +65,7 @@ export const Home = () => {
           });
         } else {
           setError('API response is not an array.');
+          console.error(centers);
         }
       })
       .catch(fetchError => {
