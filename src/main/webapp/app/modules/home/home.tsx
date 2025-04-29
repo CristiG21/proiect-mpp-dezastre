@@ -11,6 +11,7 @@ import { REDIRECT_URL } from 'app/shared/util/url-utils';
 import { useAppSelector } from 'app/config/store';
 import axios from 'axios';
 import { ICenter } from 'app/shared/model/center.model';
+import { IDisaster } from 'app/shared/model/disaster.model';
 import * as turf from '@turf/turf';
 mapboxgl.accessToken = MAPBOX_KEY!;
 
@@ -42,25 +43,15 @@ export const Home = () => {
     });
 
     axios
-      .get<ICenter[]>('/api/centers')
+      .get<IDisaster[]>('/api/disasters')
       .then(response => {
-        const centers = response.data;
+        const disasters = response.data;
 
-        if (Array.isArray(centers)) {
-          centers.forEach((center, index) => {
-            if (center.longitude != null && center.latitude != null) {
-              const popup = new mapboxgl.Popup({
-                offset: 40,
-                anchor: 'bottom',
-                closeOnMove: false,
-                closeButton: true,
-              }).setDOMContent(createPopupContent(center.name, center.id));
-
-              // Create the marker
-              const marker = new mapboxgl.Marker().setLngLat([center.latitude, center.longitude]).setPopup(popup).addTo(map);
-
+        if (Array.isArray(disasters)) {
+          disasters.forEach((disaster, index) => {
+            if (disaster.longitude != null && disaster.latitude != null) {
               // Create a 10km radius circle using Turf.js
-              const circle = turf.circle([center.latitude, center.longitude], 10, {
+              const circle = turf.circle([disaster.latitude, disaster.longitude], disaster.radius, {
                 steps: 64,
                 units: 'kilometers',
               });
@@ -92,6 +83,38 @@ export const Home = () => {
                   'line-width': 2,
                 },
               });
+            } else {
+              console.error('Invalid center coordinates:', disaster);
+              setError('Invalid center coordinates received from API.');
+            }
+          });
+        } else {
+          setError('API response is not an array.');
+          console.error(disasters);
+        }
+      })
+      .catch(fetchError => {
+        console.error(fetchError);
+        setError('Error fetching centers from the API.');
+      });
+
+    axios
+      .get<ICenter[]>('/api/centers')
+      .then(response => {
+        const centers = response.data;
+
+        if (Array.isArray(centers)) {
+          centers.forEach((center, index) => {
+            if (center.longitude != null && center.latitude != null) {
+              const popup = new mapboxgl.Popup({
+                offset: 40,
+                anchor: 'bottom',
+                closeOnMove: false,
+                closeButton: true,
+              }).setDOMContent(createPopupContent(center.name, center.id));
+
+              // Create the marker
+              const marker = new mapboxgl.Marker().setLngLat([center.latitude, center.longitude]).setPopup(popup).addTo(map);
             } else {
               console.error('Invalid center coordinates:', center);
               setError('Invalid center coordinates received from API.');

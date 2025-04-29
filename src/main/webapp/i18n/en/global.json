@@ -9,7 +9,8 @@
         "main": "Entities",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
         "center": "Center",
-        "centerTypeWrapper": "Center Type Wrapper"
+        "centerTypeWrapper": "Center Type Wrapper",
+        "disaster": "Disaster"
       },
       "account": {
         "main": "Account",
