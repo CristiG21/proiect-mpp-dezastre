@@ -1,0 +1,28 @@
+{
+  "disasterApp": {
+    "disaster": {
+      "home": {
+        "title": "Disasters",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Creeare o nouă entitate Disaster",
+        "createOrEditLabel": "Creeare sau editare Disaster",
+        "notFound": "No Disasters found"
+      },
+      "created": "A fost creată o nouă entitate Disaster cu identificatorul {{ param }}",
+      "updated": "Disaster cu identificatorul {{ param }} a fost actualizată",
+      "deleted": "Disaster cu identificatorul {{ param }} a fost ștearsă",
+      "delete": {
+        "question": "Sunteți sigur că doriți să ștergeți Disaster {{ id }}?"
+      },
+      "detail": {
+        "title": "Disaster"
+      },
+      "id": "ID",
+      "name": "Name",
+      "longitude": "Longitude",
+      "latitude": "Latitude",
+      "radius": "Radius",
+      "type": "Type"
+    }
+  }
+}

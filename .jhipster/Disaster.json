@@ -1,0 +1,35 @@
+{
+  "annotations": {
+    "changelogDate": "20250429113843"
+  },
+  "applications": "*",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "longitude",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "latitude",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "radius",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "type",
+      "fieldType": "DisasterType",
+      "fieldValues": "MINOR,MODERAT,MAJOR,CATASTROFAL"
+    }
+  ],
+  "name": "Disaster",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}
