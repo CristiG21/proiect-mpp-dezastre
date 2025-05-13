@@ -2,6 +2,7 @@ package com.mpp.disaster.domain;
 
 import static com.mpp.disaster.domain.CenterTestSamples.*;
 import static com.mpp.disaster.domain.CenterTypeWrapperTestSamples.*;
+import static com.mpp.disaster.domain.PhotoURLTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.mpp.disaster.web.rest.TestUtil;
@@ -45,5 +46,27 @@ class CenterTest {
         center.setTypes(new HashSet<>());
         assertThat(center.getTypes()).doesNotContain(centerTypeWrapperBack);
         assertThat(centerTypeWrapperBack.getCenter()).isNull();
+    }
+
+    @Test
+    void photoUrlTest() {
+        Center center = getCenterRandomSampleGenerator();
+        PhotoURL photoURLBack = getPhotoURLRandomSampleGenerator();
+
+        center.addPhotoUrl(photoURLBack);
+        assertThat(center.getPhotoUrls()).containsOnly(photoURLBack);
+        assertThat(photoURLBack.getCenter()).isEqualTo(center);
+
+        center.removePhotoUrl(photoURLBack);
+        assertThat(center.getPhotoUrls()).doesNotContain(photoURLBack);
+        assertThat(photoURLBack.getCenter()).isNull();
+
+        center.photoUrls(new HashSet<>(Set.of(photoURLBack)));
+        assertThat(center.getPhotoUrls()).containsOnly(photoURLBack);
+        assertThat(photoURLBack.getCenter()).isEqualTo(center);
+
+        center.setPhotoUrls(new HashSet<>());
+        assertThat(center.getPhotoUrls()).doesNotContain(photoURLBack);
+        assertThat(photoURLBack.getCenter()).isNull();
     }
 }

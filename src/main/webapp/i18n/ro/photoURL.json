@@ -1,0 +1,25 @@
+{
+  "disasterApp": {
+    "photoURL": {
+      "home": {
+        "title": "Photo URLS",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Creeare o nouă entitate Photo URL",
+        "createOrEditLabel": "Creeare sau editare Photo URL",
+        "notFound": "No Photo URLS found"
+      },
+      "created": "A fost creată o nouă entitate Photo URL cu identificatorul {{ param }}",
+      "updated": "Photo URL cu identificatorul {{ param }} a fost actualizată",
+      "deleted": "Photo URL cu identificatorul {{ param }} a fost ștearsă",
+      "delete": {
+        "question": "Sunteți sigur că doriți să ștergeți Photo URL {{ id }}?"
+      },
+      "detail": {
+        "title": "Photo URL"
+      },
+      "id": "ID",
+      "url": "Url",
+      "center": "Center"
+    }
+  }
+}

@@ -44,6 +44,10 @@ public class Center implements Serializable {
     @JsonIgnoreProperties(value = { "center" }, allowSetters = true)
     private Set<CenterTypeWrapper> types = new HashSet<>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "center")
+    @JsonIgnoreProperties(value = { "center" }, allowSetters = true)
+    private Set<PhotoURL> photoUrls = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -165,6 +169,37 @@ public class Center implements Serializable {
     public Center removeTypes(CenterTypeWrapper centerTypeWrapper) {
         this.types.remove(centerTypeWrapper);
         centerTypeWrapper.setCenter(null);
+        return this;
+    }
+
+    public Set<PhotoURL> getPhotoUrls() {
+        return this.photoUrls;
+    }
+
+    public void setPhotoUrls(Set<PhotoURL> photoURLS) {
+        if (this.photoUrls != null) {
+            this.photoUrls.forEach(i -> i.setCenter(null));
+        }
+        if (photoURLS != null) {
+            photoURLS.forEach(i -> i.setCenter(this));
+        }
+        this.photoUrls = photoURLS;
+    }
+
+    public Center photoUrls(Set<PhotoURL> photoURLS) {
+        this.setPhotoUrls(photoURLS);
+        return this;
+    }
+
+    public Center addPhotoUrl(PhotoURL photoURL) {
+        this.photoUrls.add(photoURL);
+        photoURL.setCenter(this);
+        return this;
+    }
+
+    public Center removePhotoUrl(PhotoURL photoURL) {
+        this.photoUrls.remove(photoURL);
+        photoURL.setCenter(null);
         return this;
     }
 
