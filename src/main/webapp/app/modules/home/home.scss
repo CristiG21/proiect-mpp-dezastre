@@ -183,3 +183,21 @@ Mapbox Popup Custom Styling
     font-size: 14px;
   }
 }
+
+.pagination-controls {
+  margin-top: 1rem;
+  text-align: center;
+
+  button {
+    padding: 0.4rem 1rem;
+    margin: 0 0.5rem;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    cursor: pointer;
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+}
