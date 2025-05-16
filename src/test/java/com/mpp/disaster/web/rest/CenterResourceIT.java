@@ -323,7 +323,11 @@ class CenterResourceIT {
         Center partialUpdatedCenter = new Center();
         partialUpdatedCenter.setId(center.getId());
 
-        partialUpdatedCenter.status(UPDATED_STATUS);
+        partialUpdatedCenter
+            .name(UPDATED_NAME)
+            .latitude(UPDATED_LATITUDE)
+            .description(UPDATED_DESCRIPTION)
+            .availableSeats(UPDATED_AVAILABLE_SEATS);
 
         restCenterMockMvc
             .perform(

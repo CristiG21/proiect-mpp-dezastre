@@ -21,6 +21,18 @@ export const Home = () => {
   const account = useAppSelector(state => state.authentication.account);
   const pageLocation = useLocation();
   const navigate = useNavigate();
+
+  // --- ADDED FEED STATE ---
+  const [showFeed, setShowFeed] = useState(false);
+  const [activeTab, setActiveTab] = useState<'community' | 'official'>('community');
+
+  useEffect(() => {
+    const toggleFeedListener = () => setShowFeed(prev => !prev);
+    window.addEventListener('toggleFeed', toggleFeedListener);
+    return () => window.removeEventListener('toggleFeed', toggleFeedListener);
+  }, []);
+  // ------------------------
+
   useEffect(() => {
     const redirectURL = localStorage.getItem(REDIRECT_URL);
     if (redirectURL) {
@@ -50,19 +62,16 @@ export const Home = () => {
         if (Array.isArray(disasters)) {
           disasters.forEach((disaster, index) => {
             if (disaster.longitude != null && disaster.latitude != null) {
-              // Create a 10km radius circle using Turf.js
               const circle = turf.circle([disaster.latitude, disaster.longitude], disaster.radius, {
                 steps: 64,
                 units: 'kilometers',
               });
 
-              // Add circle as a source
               map.addSource(`circle-source-${index}`, {
                 type: 'geojson',
                 data: circle,
               });
 
-              // Add circle as a fill layer
               map.addLayer({
                 id: `circle-fill-${index}`,
                 type: 'fill',
@@ -73,7 +82,6 @@ export const Home = () => {
                 },
               });
 
-              // Optional: add a circle border (outline)
               map.addLayer({
                 id: `circle-outline-${index}`,
                 type: 'line',
@@ -113,7 +121,6 @@ export const Home = () => {
                 closeButton: true,
               }).setDOMContent(createPopupContent(center.name, center.id));
 
-              // Create the marker
               const marker = new mapboxgl.Marker().setLngLat([center.latitude, center.longitude]).setPopup(popup).addTo(map);
             } else {
               console.error('Invalid center coordinates:', center);
@@ -133,7 +140,6 @@ export const Home = () => {
     return () => map.remove();
   }, []);
 
-  // Create popup content with custom styling
   const createPopupContent = (name: string, centerId: number): HTMLElement => {
     const content = document.createElement('div');
     content.classList.add('popup-content');
@@ -147,7 +153,6 @@ export const Home = () => {
     button.innerText = 'View Details';
     button.classList.add('popup-button');
 
-    // When clicking the button, navigate to the details page
     button.onclick = () => {
       window.location.href = `/center/${centerId}`;
     };
@@ -158,9 +163,39 @@ export const Home = () => {
   };
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       {error && <Alert color="danger">{error}</Alert>}
+
       <div ref={mapContainerRef} style={{ width: '100%', height: '80vh', borderRadius: '12px' }} />
+
+      <div className={`side-panel ${showFeed ? 'visible' : ''}`}>
+        <h5 style={{ fontWeight: 'bold', marginBottom: '1rem' }}>News Feed</h5>
+
+        <div className="tab-selector">
+          <button className={activeTab === 'community' ? 'active' : ''} onClick={() => setActiveTab('community')}>
+            Community
+          </button>
+          <button className={activeTab === 'official' ? 'active' : ''} onClick={() => setActiveTab('official')}>
+            Official
+          </button>
+        </div>
+
+        {activeTab === 'community' && (
+          <div className="feed-item">
+            <p>
+              <strong>@user123:</strong> Flood warning in Iasi. Evacuating now!
+            </p>
+          </div>
+        )}
+
+        {activeTab === 'official' && (
+          <div className="feed-item">
+            <p>
+              <strong>Gov RO:</strong> Emergency declared in Braila county. Stay indoors.
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
