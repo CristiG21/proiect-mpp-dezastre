@@ -2,7 +2,7 @@
   "generator-jhipster": {
     "applicationType": "monolith",
     "authenticationType": "oauth2",
-    "baseName": "Disaster-App",
+    "baseName": "DisasterApp",
     "buildTool": "maven",
     "cacheProvider": "no",
     "clientFramework": "react",
