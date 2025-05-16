@@ -2,17 +2,17 @@ import './home.scss';
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Translate } from 'react-jhipster';
 import { Alert } from 'reactstrap';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import axios from 'axios';
+import * as turf from '@turf/turf';
 
 import { REDIRECT_URL } from 'app/shared/util/url-utils';
 import { useAppSelector } from 'app/config/store';
-import axios from 'axios';
 import { ICenter } from 'app/shared/model/center.model';
 import { IDisaster } from 'app/shared/model/disaster.model';
-import * as turf from '@turf/turf';
+
 mapboxgl.accessToken = MAPBOX_KEY!;
 
 export const Home = () => {
@@ -21,6 +21,18 @@ export const Home = () => {
   const account = useAppSelector(state => state.authentication.account);
   const pageLocation = useLocation();
   const navigate = useNavigate();
+
+  const [showFeed, setShowFeed] = useState(false);
+  const [activeTab, setActiveTab] = useState<'community' | 'official'>('community');
+
+  const [messages, setMessages] = useState<{ id: number; type: 'COMMUNITY' | 'OFFICIAL'; content: string; user: { login: string } }[]>([]);
+
+  useEffect(() => {
+    const toggleFeedListener = () => setShowFeed(prev => !prev);
+    window.addEventListener('toggleFeed', toggleFeedListener);
+    return () => window.removeEventListener('toggleFeed', toggleFeedListener);
+  }, []);
+
   useEffect(() => {
     const redirectURL = localStorage.getItem(REDIRECT_URL);
     if (redirectURL) {
@@ -50,19 +62,16 @@ export const Home = () => {
         if (Array.isArray(disasters)) {
           disasters.forEach((disaster, index) => {
             if (disaster.longitude != null && disaster.latitude != null) {
-              // Create a 10km radius circle using Turf.js
               const circle = turf.circle([disaster.latitude, disaster.longitude], disaster.radius, {
                 steps: 64,
                 units: 'kilometers',
               });
 
-              // Add circle as a source
               map.addSource(`circle-source-${index}`, {
                 type: 'geojson',
                 data: circle,
               });
 
-              // Add circle as a fill layer
               map.addLayer({
                 id: `circle-fill-${index}`,
                 type: 'fill',
@@ -73,7 +82,6 @@ export const Home = () => {
                 },
               });
 
-              // Optional: add a circle border (outline)
               map.addLayer({
                 id: `circle-outline-${index}`,
                 type: 'line',
@@ -95,7 +103,7 @@ export const Home = () => {
       })
       .catch(fetchError => {
         console.error(fetchError);
-        setError('Error fetching centers from the API.');
+        setError('Error fetching disasters from the API.');
       });
 
     axios
@@ -113,7 +121,6 @@ export const Home = () => {
                 closeButton: true,
               }).setDOMContent(createPopupContent(center.name, center.id));
 
-              // Create the marker
               const marker = new mapboxgl.Marker().setLngLat([center.latitude, center.longitude]).setPopup(popup).addTo(map);
             } else {
               console.error('Invalid center coordinates:', center);
@@ -133,7 +140,24 @@ export const Home = () => {
     return () => map.remove();
   }, []);
 
-  // Create popup content with custom styling
+  useEffect(() => {
+    axios
+      .get('/api/community-messages', {
+        params: {
+          page: 0,
+          size: 20,
+        },
+      })
+      .then(response => {
+        const messagesFromApi = Array.isArray(response.data) ? response.data : response.data.content;
+        setMessages(messagesFromApi || []);
+      })
+      .catch(err => {
+        console.error('Failed to fetch messages:', err);
+        setMessages([]); // fallback on error
+      });
+  }, []);
+
   const createPopupContent = (name: string, centerId: number): HTMLElement => {
     const content = document.createElement('div');
     content.classList.add('popup-content');
@@ -146,21 +170,44 @@ export const Home = () => {
     const button = document.createElement('button');
     button.innerText = 'View Details';
     button.classList.add('popup-button');
-
-    // When clicking the button, navigate to the details page
     button.onclick = () => {
       window.location.href = `/center/${centerId}`;
     };
-
     content.appendChild(button);
 
     return content;
   };
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       {error && <Alert color="danger">{error}</Alert>}
+
       <div ref={mapContainerRef} style={{ width: '100%', height: '80vh', borderRadius: '12px' }} />
+
+      <div className={`side-panel ${showFeed ? 'visible' : ''}`}>
+        <h5 style={{ fontWeight: 'bold', marginBottom: '1rem' }}>News Feed</h5>
+
+        <div className="tab-selector">
+          <button className={activeTab === 'community' ? 'active' : ''} onClick={() => setActiveTab('community')}>
+            Community
+          </button>
+          <button className={activeTab === 'official' ? 'active' : ''} onClick={() => setActiveTab('official')}>
+            Official
+          </button>
+        </div>
+
+        <div className="feed-list">
+          {messages
+            .filter(msg => (activeTab === 'community' ? msg.type === 'COMMUNITY' : msg.type === 'OFFICIAL'))
+            .map(msg => (
+              <div key={msg.id} className="feed-item">
+                <p>
+                  <strong>@{msg.user?.login || 'unknown'}:</strong> {msg.content}
+                </p>
+              </div>
+            ))}
+        </div>
+      </div>
     </div>
   );
 };

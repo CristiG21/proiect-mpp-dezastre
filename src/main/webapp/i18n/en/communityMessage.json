@@ -1,0 +1,29 @@
+{
+  "disasterApp": {
+    "communityMessage": {
+      "home": {
+        "title": "Community Messages",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Community Message",
+        "createOrEditLabel": "Create or edit a Community Message",
+        "notFound": "No Community Messages found"
+      },
+      "created": "A new Community Message is created with identifier {{ param }}",
+      "updated": "A Community Message is updated with identifier {{ param }}",
+      "deleted": "A Community Message is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Community Message {{ id }}?"
+      },
+      "detail": {
+        "title": "Community Message"
+      },
+      "id": "ID",
+      "content": "Content",
+      "time_posted": "Time Posted",
+      "type": "Type",
+      "parentId": "Parent Id",
+      "approved": "Approved",
+      "user": "User"
+    }
+  }
+}

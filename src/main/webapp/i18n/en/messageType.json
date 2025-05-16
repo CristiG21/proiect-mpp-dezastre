@@ -1,0 +1,9 @@
+{
+  "disasterApp": {
+    "MessageType": {
+      "null": "",
+      "COMMUNITY": "COMMUNITY",
+      "OFFICIAL": "OFFICIAL"
+    }
+  }
+}

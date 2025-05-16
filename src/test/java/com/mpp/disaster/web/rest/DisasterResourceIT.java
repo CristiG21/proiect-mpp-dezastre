@@ -318,7 +318,7 @@ class DisasterResourceIT {
         Disaster partialUpdatedDisaster = new Disaster();
         partialUpdatedDisaster.setId(disaster.getId());
 
-        partialUpdatedDisaster.name(UPDATED_NAME).longitude(UPDATED_LONGITUDE).latitude(UPDATED_LATITUDE).radius(UPDATED_RADIUS);
+        partialUpdatedDisaster.radius(UPDATED_RADIUS);
 
         restDisasterMockMvc
             .perform(
