@@ -2,17 +2,17 @@ import './home.scss';
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Translate } from 'react-jhipster';
 import { Alert } from 'reactstrap';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import axios from 'axios';
+import * as turf from '@turf/turf';
 
 import { REDIRECT_URL } from 'app/shared/util/url-utils';
 import { useAppSelector } from 'app/config/store';
-import axios from 'axios';
 import { ICenter } from 'app/shared/model/center.model';
 import { IDisaster } from 'app/shared/model/disaster.model';
-import * as turf from '@turf/turf';
+
 mapboxgl.accessToken = MAPBOX_KEY!;
 
 export const Home = () => {
@@ -22,16 +22,16 @@ export const Home = () => {
   const pageLocation = useLocation();
   const navigate = useNavigate();
 
-  // --- ADDED FEED STATE ---
   const [showFeed, setShowFeed] = useState(false);
   const [activeTab, setActiveTab] = useState<'community' | 'official'>('community');
+
+  const [messages, setMessages] = useState<{ id: number; type: 'COMMUNITY' | 'OFFICIAL'; content: string; user: { login: string } }[]>([]);
 
   useEffect(() => {
     const toggleFeedListener = () => setShowFeed(prev => !prev);
     window.addEventListener('toggleFeed', toggleFeedListener);
     return () => window.removeEventListener('toggleFeed', toggleFeedListener);
   }, []);
-  // ------------------------
 
   useEffect(() => {
     const redirectURL = localStorage.getItem(REDIRECT_URL);
@@ -103,7 +103,7 @@ export const Home = () => {
       })
       .catch(fetchError => {
         console.error(fetchError);
-        setError('Error fetching centers from the API.');
+        setError('Error fetching disasters from the API.');
       });
 
     axios
@@ -140,6 +140,24 @@ export const Home = () => {
     return () => map.remove();
   }, []);
 
+  useEffect(() => {
+    axios
+      .get('/api/community-messages', {
+        params: {
+          page: 0,
+          size: 20,
+        },
+      })
+      .then(response => {
+        const messagesFromApi = Array.isArray(response.data) ? response.data : response.data.content;
+        setMessages(messagesFromApi || []);
+      })
+      .catch(err => {
+        console.error('Failed to fetch messages:', err);
+        setMessages([]); // fallback on error
+      });
+  }, []);
+
   const createPopupContent = (name: string, centerId: number): HTMLElement => {
     const content = document.createElement('div');
     content.classList.add('popup-content');
@@ -152,11 +170,9 @@ export const Home = () => {
     const button = document.createElement('button');
     button.innerText = 'View Details';
     button.classList.add('popup-button');
-
     button.onclick = () => {
       window.location.href = `/center/${centerId}`;
     };
-
     content.appendChild(button);
 
     return content;
@@ -180,21 +196,17 @@ export const Home = () => {
           </button>
         </div>
 
-        {activeTab === 'community' && (
-          <div className="feed-item">
-            <p>
-              <strong>@user123:</strong> Flood warning in Iasi. Evacuating now!
-            </p>
-          </div>
-        )}
-
-        {activeTab === 'official' && (
-          <div className="feed-item">
-            <p>
-              <strong>Gov RO:</strong> Emergency declared in Braila county. Stay indoors.
-            </p>
-          </div>
-        )}
+        <div className="feed-list">
+          {messages
+            .filter(msg => (activeTab === 'community' ? msg.type === 'COMMUNITY' : msg.type === 'OFFICIAL'))
+            .map(msg => (
+              <div key={msg.id} className="feed-item">
+                <p>
+                  <strong>@{msg.user?.login || 'unknown'}:</strong> {msg.content}
+                </p>
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );

@@ -325,6 +325,7 @@ class CenterResourceIT {
 
         partialUpdatedCenter
             .name(UPDATED_NAME)
+            .longitude(UPDATED_LONGITUDE)
             .latitude(UPDATED_LATITUDE)
             .description(UPDATED_DESCRIPTION)
             .availableSeats(UPDATED_AVAILABLE_SEATS);

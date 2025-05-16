@@ -1,0 +1,29 @@
+{
+  "disasterApp": {
+    "communityMessage": {
+      "home": {
+        "title": "Community Messages",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Creeare o nouă entitate Community Message",
+        "createOrEditLabel": "Creeare sau editare Community Message",
+        "notFound": "No Community Messages found"
+      },
+      "created": "A fost creată o nouă entitate Community Message cu identificatorul {{ param }}",
+      "updated": "Community Message cu identificatorul {{ param }} a fost actualizată",
+      "deleted": "Community Message cu identificatorul {{ param }} a fost ștearsă",
+      "delete": {
+        "question": "Sunteți sigur că doriți să ștergeți Community Message {{ id }}?"
+      },
+      "detail": {
+        "title": "Community Message"
+      },
+      "id": "ID",
+      "content": "Content",
+      "time_posted": "Time Posted",
+      "type": "Type",
+      "parentId": "Parent Id",
+      "approved": "Approved",
+      "user": "User"
+    }
+  }
+}
