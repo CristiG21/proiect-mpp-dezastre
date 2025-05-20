@@ -121,7 +121,7 @@ export const Home = () => {
                 closeButton: true,
               }).setDOMContent(createPopupContent(center.name, center.id));
 
-              const marker = new mapboxgl.Marker().setLngLat([center.latitude, center.longitude]).setPopup(popup).addTo(map);
+              const marker = new mapboxgl.Marker().setLngLat([center.longitude, center.latitude]).setPopup(popup).addTo(map);
             } else {
               console.error('Invalid center coordinates:', center);
               setError('Invalid center coordinates received from API.');
@@ -171,7 +171,7 @@ export const Home = () => {
     button.innerText = 'View Details';
     button.classList.add('popup-button');
     button.onclick = () => {
-      window.location.href = `/center/${centerId}`;
+      window.location.href = `/center/detailing/${centerId}`;
     };
     content.appendChild(button);
 
