@@ -72,7 +72,17 @@ export const CenterDetail = () => {
         <strong>Types:</strong>{' '}
         {centerTypes.length > 0 ? (
           centerTypes.map((type, index) => (
-            <span key={index} className="badge badge-info mr-1">
+            <span
+              key={index}
+              style={{
+                backgroundColor: '#e0e0e0',
+                color: 'black',
+                padding: '5px 10px',
+                borderRadius: '12px',
+                marginRight: '5px',
+                fontWeight: 'bold',
+              }}
+            >
               {type}
             </span>
           ))

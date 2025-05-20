@@ -1,6 +1,8 @@
 package com.mpp.disaster.repository;
 
 import com.mpp.disaster.domain.CenterTypeWrapper;
+import com.mpp.disaster.domain.PhotoURL;
+import java.util.List;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -9,4 +11,6 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface CenterTypeWrapperRepository extends JpaRepository<CenterTypeWrapper, Long> {}
+public interface CenterTypeWrapperRepository extends JpaRepository<CenterTypeWrapper, Long> {
+    List<CenterTypeWrapper> findAllByCenterId(Long centerId);
+}

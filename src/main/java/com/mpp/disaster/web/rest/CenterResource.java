@@ -4,12 +4,14 @@ import com.mpp.disaster.domain.CenterTypeWrapper;
 import com.mpp.disaster.domain.PhotoURL;
 import com.mpp.disaster.domain.enumeration.CenterType;
 import com.mpp.disaster.repository.CenterRepository;
+import com.mpp.disaster.repository.CenterTypeWrapperRepository;
 import com.mpp.disaster.repository.PhotoURLRepository;
 import com.mpp.disaster.service.CenterService;
 import com.mpp.disaster.service.dto.CenterDTO;
 import com.mpp.disaster.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -44,12 +46,19 @@ public class CenterResource {
     private final CenterService centerService;
 
     private final CenterRepository centerRepository;
+    private final CenterTypeWrapperRepository centerTypeWrapperRepository;
 
     private final PhotoURLRepository photoURLRepository;
 
-    public CenterResource(CenterService centerService, CenterRepository centerRepository, PhotoURLRepository photoURLRepository) {
+    public CenterResource(
+        CenterService centerService,
+        CenterRepository centerRepository,
+        CenterTypeWrapperRepository centerTypeWrapperRepository,
+        PhotoURLRepository photoURLRepository
+    ) {
         this.centerService = centerService;
         this.centerRepository = centerRepository;
+        this.centerTypeWrapperRepository = centerTypeWrapperRepository;
         this.photoURLRepository = photoURLRepository;
     }
 
@@ -75,7 +84,7 @@ public class CenterResource {
     /**
      * {@code PUT  /centers/:id} : Updates an existing center.
      *
-     * @param id the id of the centerDTO to save.
+     * @param id        the id of the centerDTO to save.
      * @param centerDTO the centerDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated centerDTO,
      * or with status {@code 400 (Bad Request)} if the centerDTO is not valid,
@@ -108,7 +117,7 @@ public class CenterResource {
     /**
      * {@code PATCH  /centers/:id} : Partial updates given fields of an existing center, field will ignore if it is null
      *
-     * @param id the id of the centerDTO to save.
+     * @param id        the id of the centerDTO to save.
      * @param centerDTO the centerDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated centerDTO,
      * or with status {@code 400 (Bad Request)} if the centerDTO is not valid,
@@ -189,14 +198,13 @@ public class CenterResource {
         return ResponseEntity.ok(photos);
     }
 
-    @GetMapping("/centers/{id}/types")
+    @GetMapping("/{id}/types")
     public ResponseEntity<List<CenterType>> getCenterTypes(@PathVariable Long id) {
-        return centerRepository
-            .findById(id)
-            .map(center -> {
-                List<CenterType> types = center.getTypes().stream().map(CenterTypeWrapper::getType).collect(Collectors.toList());
-                return ResponseEntity.ok(types);
-            })
-            .orElse(ResponseEntity.notFound().build());
+        List<CenterTypeWrapper> centerTypeWrappers = centerTypeWrapperRepository.findAllByCenterId(id);
+        List<CenterType> centerTypes = new ArrayList<>();
+        for (CenterTypeWrapper centerTypeWrapper : centerTypeWrappers) {
+            centerTypes.add(centerTypeWrapper.getType());
+        }
+        return ResponseEntity.ok(centerTypes);
     }
 }
