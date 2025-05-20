@@ -8,7 +8,6 @@ import CenterDetail from './center-detail';
 import CenterUpdate from './center-update';
 import CenterDeleteDialog from './center-delete-dialog';
 
-console.warn('CenterRoutes loaded');
 const CenterRoutes = () => (
   <ErrorBoundaryRoutes>
     <Route index element={<Center />} />

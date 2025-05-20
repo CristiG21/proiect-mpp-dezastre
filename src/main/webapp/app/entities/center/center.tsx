@@ -43,7 +43,6 @@ export const Center = () => {
   };
 
   useEffect(() => {
-    console.warn('Center: useEffect');
     sortEntities();
   }, [paginationState.activePage, paginationState.order, paginationState.sort]);
 
