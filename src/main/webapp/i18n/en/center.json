@@ -24,7 +24,8 @@
       "status": "Status",
       "description": "Description",
       "availableSeats": "Available Seats",
-      "types": "Types"
+      "types": "Types",
+      "photoUrl": "Photo Url"
     }
   }
 }

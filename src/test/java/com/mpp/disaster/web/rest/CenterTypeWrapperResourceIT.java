@@ -293,6 +293,8 @@ class CenterTypeWrapperResourceIT {
         CenterTypeWrapper partialUpdatedCenterTypeWrapper = new CenterTypeWrapper();
         partialUpdatedCenterTypeWrapper.setId(centerTypeWrapper.getId());
 
+        partialUpdatedCenterTypeWrapper.type(UPDATED_TYPE);
+
         restCenterTypeWrapperMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedCenterTypeWrapper.getId())

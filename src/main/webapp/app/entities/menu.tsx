@@ -15,6 +15,9 @@ const EntitiesMenu = () => {
       <MenuItem icon="asterisk" to="/disaster">
         <Translate contentKey="global.menu.entities.disaster" />
       </MenuItem>
+      <MenuItem icon="asterisk" to="/photo-url">
+        <Translate contentKey="global.menu.entities.photoUrl" />
+      </MenuItem>
       <MenuItem icon="asterisk" to="/community-message">
         <Translate contentKey="global.menu.entities.communityMessage" />
       </MenuItem>

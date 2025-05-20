@@ -11,7 +11,8 @@
         "center": "Center",
         "centerTypeWrapper": "Center Type Wrapper",
         "disaster": "Disaster",
-        "communityMessage": "Community Message"
+        "communityMessage": "Community Message",
+        "photoUrl": "Photo URL"
       },
       "account": {
         "main": "Account",

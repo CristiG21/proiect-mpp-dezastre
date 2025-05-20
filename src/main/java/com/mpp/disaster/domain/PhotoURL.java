@@ -1,17 +1,16 @@
 package com.mpp.disaster.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.mpp.disaster.domain.enumeration.CenterType;
 import jakarta.persistence.*;
 import java.io.Serializable;
 
 /**
- * A CenterTypeWrapper.
+ * A PhotoURL.
  */
 @Entity
-@Table(name = "center_type_wrapper")
+@Table(name = "photourl")
 @SuppressWarnings("common-java:DuplicatedBlocks")
-public class CenterTypeWrapper implements Serializable {
+public class PhotoURL implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -21,9 +20,8 @@ public class CenterTypeWrapper implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type")
-    private CenterType type;
+    @Column(name = "url")
+    private String url;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "types", "photoUrls" }, allowSetters = true)
@@ -35,7 +33,7 @@ public class CenterTypeWrapper implements Serializable {
         return this.id;
     }
 
-    public CenterTypeWrapper id(Long id) {
+    public PhotoURL id(Long id) {
         this.setId(id);
         return this;
     }
@@ -44,17 +42,17 @@ public class CenterTypeWrapper implements Serializable {
         this.id = id;
     }
 
-    public CenterType getType() {
-        return this.type;
+    public String getUrl() {
+        return this.url;
     }
 
-    public CenterTypeWrapper type(CenterType type) {
-        this.setType(type);
+    public PhotoURL url(String url) {
+        this.setUrl(url);
         return this;
     }
 
-    public void setType(CenterType type) {
-        this.type = type;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Center getCenter() {
@@ -65,7 +63,7 @@ public class CenterTypeWrapper implements Serializable {
         this.center = center;
     }
 
-    public CenterTypeWrapper center(Center center) {
+    public PhotoURL center(Center center) {
         this.setCenter(center);
         return this;
     }
@@ -77,10 +75,10 @@ public class CenterTypeWrapper implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof CenterTypeWrapper)) {
+        if (!(o instanceof PhotoURL)) {
             return false;
         }
-        return getId() != null && getId().equals(((CenterTypeWrapper) o).getId());
+        return getId() != null && getId().equals(((PhotoURL) o).getId());
     }
 
     @Override
@@ -92,9 +90,9 @@ public class CenterTypeWrapper implements Serializable {
     // prettier-ignore
     @Override
     public String toString() {
-        return "CenterTypeWrapper{" +
+        return "PhotoURL{" +
             "id=" + getId() +
-            ", type='" + getType() + "'" +
+            ", url='" + getUrl() + "'" +
             "}";
     }
 }
