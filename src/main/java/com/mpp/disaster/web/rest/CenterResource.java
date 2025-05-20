@@ -1,6 +1,8 @@
 package com.mpp.disaster.web.rest;
 
+import com.mpp.disaster.domain.CenterTypeWrapper;
 import com.mpp.disaster.domain.PhotoURL;
+import com.mpp.disaster.domain.enumeration.CenterType;
 import com.mpp.disaster.repository.CenterRepository;
 import com.mpp.disaster.repository.PhotoURLRepository;
 import com.mpp.disaster.service.CenterService;
@@ -11,6 +13,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -184,5 +187,16 @@ public class CenterResource {
     public ResponseEntity<List<PhotoURL>> getPhotosForCenter(@PathVariable Long id) {
         List<PhotoURL> photos = photoURLRepository.findAllByCenterId(id);
         return ResponseEntity.ok(photos);
+    }
+
+    @GetMapping("/centers/{id}/types")
+    public ResponseEntity<List<CenterType>> getCenterTypes(@PathVariable Long id) {
+        return centerRepository
+            .findById(id)
+            .map(center -> {
+                List<CenterType> types = center.getTypes().stream().map(CenterTypeWrapper::getType).collect(Collectors.toList());
+                return ResponseEntity.ok(types);
+            })
+            .orElse(ResponseEntity.notFound().build());
     }
 }

@@ -4,11 +4,14 @@ import axios from 'axios';
 import { ICenter } from 'app/shared/model/center.model';
 import { IPhotoURL } from 'app/shared/model/photo-url.model';
 import { Alert } from 'reactstrap';
+import { ICenterTypeWrapper } from 'app/shared/model/center-type-wrapper.model';
+import { CenterType } from 'app/shared/model/enumerations/center-type.model';
 
 export const CenterDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [center, setCenter] = useState<ICenter | null>(null);
   const [photos, setPhotos] = useState<IPhotoURL[]>([]);
+  const [centerTypes, setCenterTypes] = useState<CenterType[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -27,7 +30,14 @@ export const CenterDetail = () => {
       .then(response => setPhotos(response.data))
       .catch(err => {
         console.error(err);
-        // Nu setăm eroare globală, poate centrul nu are poze
+      });
+
+    // Fetch associated center types
+    axios
+      .get<CenterType[]>(`/api/centers/${id}/types`)
+      .then(response => setCenterTypes(response.data))
+      .catch(err => {
+        console.error(err);
       });
   }, [id]);
 
@@ -52,12 +62,26 @@ export const CenterDetail = () => {
 
       {/* Available Seats */}
       {center.availableSeats != null && (
-        <p style={{ fontSize: '1.2rem', marginBottom: '30px', textAlign: 'center' }}>
+        <p style={{ fontSize: '1.2rem', marginBottom: '15px', textAlign: 'center' }}>
           <strong>Available Seats:</strong> {center.availableSeats}
         </p>
       )}
 
-      {/* Photos from backend */}
+      {/* Center Types */}
+      <p style={{ fontSize: '1.2rem', marginBottom: '30px', textAlign: 'center' }}>
+        <strong>Types:</strong>{' '}
+        {centerTypes.length > 0 ? (
+          centerTypes.map((type, index) => (
+            <span key={index} className="badge badge-info mr-1">
+              {type}
+            </span>
+          ))
+        ) : (
+          <span className="text-muted">No types</span>
+        )}
+      </p>
+
+      {/* Photos */}
       {photos.length > 0 && (
         <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center' }}>
           {photos.map((photo, index) => (
