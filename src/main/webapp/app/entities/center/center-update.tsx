@@ -26,6 +26,7 @@ export const CenterUpdate = () => {
   };
 
   useEffect(() => {
+    console.warn('CenterUpdate: useEffect', { id });
     if (isNew) {
       dispatch(reset());
     } else {

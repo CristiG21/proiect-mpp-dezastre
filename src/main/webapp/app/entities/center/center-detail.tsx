@@ -14,6 +14,7 @@ export const CenterDetail = () => {
   const { id } = useParams<'id'>();
 
   useEffect(() => {
+    console.warn('CenterDetail: useEffect with {id}', { id });
     dispatch(getEntity(id));
   }, []);
 
