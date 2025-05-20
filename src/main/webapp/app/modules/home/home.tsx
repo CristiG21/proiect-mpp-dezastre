@@ -25,7 +25,24 @@ export const Home = () => {
   const [showFeed, setShowFeed] = useState(false);
   const [activeTab, setActiveTab] = useState<'community' | 'official'>('community');
 
-  const [messages, setMessages] = useState<{ id: number; type: 'COMMUNITY' | 'OFFICIAL'; content: string; user: { login: string } }[]>([]);
+  type CommunityMessage = {
+    id: number;
+    type: 'COMMUNITY';
+    content: string;
+    user: { login: string };
+  };
+
+  type OfficialMessage = {
+    id: number;
+    type: 'OFFICIAL';
+    title: string;
+    body: string;
+    user: { login: string };
+  };
+
+  type Message = CommunityMessage | OfficialMessage;
+
+  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     const toggleFeedListener = () => setShowFeed(prev => !prev);
@@ -141,21 +158,33 @@ export const Home = () => {
   }, []);
 
   useEffect(() => {
-    axios
-      .get('/api/community-messages', {
-        params: {
-          page: 0,
-          size: 20,
-        },
-      })
-      .then(response => {
-        const messagesFromApi = Array.isArray(response.data) ? response.data : response.data.content;
-        setMessages(messagesFromApi || []);
-      })
-      .catch(err => {
+    const fetchMessages = async () => {
+      try {
+        const [communityRes, officialRes] = await Promise.all([
+          axios.get('/api/community-messages', { params: { page: 0, size: 20 } }),
+          axios.get('/api/official-messages', { params: { page: 0, size: 20 } }),
+        ]);
+
+        const communityMessages = Array.isArray(communityRes.data)
+          ? communityRes.data.map((msg: any) => ({ ...msg, type: 'COMMUNITY' }))
+          : Array.isArray(communityRes.data.content)
+            ? communityRes.data.content.map((msg: any) => ({ ...msg, type: 'COMMUNITY' }))
+            : [];
+
+        const officialMessages = Array.isArray(officialRes.data)
+          ? officialRes.data.map((msg: any) => ({ ...msg, type: 'OFFICIAL' }))
+          : Array.isArray(officialRes.data.content)
+            ? officialRes.data.content.map((msg: any) => ({ ...msg, type: 'OFFICIAL' }))
+            : [];
+
+        setMessages([...communityMessages, ...officialMessages]);
+      } catch (err) {
         console.error('Failed to fetch messages:', err);
-        setMessages([]); // fallback on error
-      });
+        setMessages([]);
+      }
+    };
+
+    fetchMessages();
   }, []);
 
   const createPopupContent = (name: string, centerId: number): HTMLElement => {
@@ -198,12 +227,20 @@ export const Home = () => {
 
         <div className="feed-list">
           {messages
-            .filter(msg => (activeTab === 'community' ? msg.type === 'COMMUNITY' : msg.type === 'OFFICIAL'))
+            .filter(msg => msg.type === (activeTab === 'community' ? 'COMMUNITY' : 'OFFICIAL'))
             .map(msg => (
               <div key={msg.id} className="feed-item">
-                <p>
-                  <strong>@{msg.user?.login || 'unknown'}:</strong> {msg.content}
-                </p>
+                {msg.type === 'COMMUNITY' ? (
+                  <p>
+                    <strong>@{msg.user?.login || 'unknown'}:</strong> {msg.content}
+                  </p>
+                ) : (
+                  <>
+                    <h6 style={{ fontWeight: 'bold' }}>{msg.title}</h6>
+                    <p>{msg.body}</p>
+                    <small className="text-muted">by @{msg.user?.login || 'unknown'}</small>
+                  </>
+                )}
               </div>
             ))}
         </div>

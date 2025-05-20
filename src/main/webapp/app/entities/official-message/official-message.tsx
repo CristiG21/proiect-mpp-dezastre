@@ -9,9 +9,9 @@ import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.cons
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
-import { getEntities } from './community-message.reducer';
+import { getEntities } from './official-message.reducer';
 
-export const CommunityMessage = () => {
+export const OfficialMessage = () => {
   const dispatch = useAppDispatch();
 
   const pageLocation = useLocation();
@@ -21,9 +21,9 @@ export const CommunityMessage = () => {
     overridePaginationStateWithQueryParams(getPaginationState(pageLocation, ITEMS_PER_PAGE, 'id'), pageLocation.search),
   );
 
-  const communityMessageList = useAppSelector(state => state.communityMessage.entities);
-  const loading = useAppSelector(state => state.communityMessage.loading);
-  const totalItems = useAppSelector(state => state.communityMessage.totalItems);
+  const officialMessageList = useAppSelector(state => state.officialMessage.entities);
+  const loading = useAppSelector(state => state.officialMessage.loading);
+  const totalItems = useAppSelector(state => state.officialMessage.totalItems);
 
   const getAllEntities = () => {
     dispatch(
@@ -91,83 +91,68 @@ export const CommunityMessage = () => {
 
   return (
     <div>
-      <h2 id="community-message-heading" data-cy="CommunityMessageHeading">
-        <Translate contentKey="disasterApp.communityMessage.home.title">Community Messages</Translate>
+      <h2 id="official-message-heading" data-cy="OfficialMessageHeading">
+        <Translate contentKey="disasterApp.officialMessage.home.title">Official Messages</Translate>
         <div className="d-flex justify-content-end">
           <Button className="me-2" color="info" onClick={handleSyncList} disabled={loading}>
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
-            <Translate contentKey="disasterApp.communityMessage.home.refreshListLabel">Refresh List</Translate>
+            <Translate contentKey="disasterApp.officialMessage.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to="/community-message/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
+          <Link to="/official-message/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
             <FontAwesomeIcon icon="plus" />
             &nbsp;
-            <Translate contentKey="disasterApp.communityMessage.home.createLabel">Create new Community Message</Translate>
+            <Translate contentKey="disasterApp.officialMessage.home.createLabel">Create new Official Message</Translate>
           </Link>
         </div>
       </h2>
       <div className="table-responsive">
-        {communityMessageList && communityMessageList.length > 0 ? (
+        {officialMessageList && officialMessageList.length > 0 ? (
           <Table responsive>
             <thead>
               <tr>
                 <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="disasterApp.communityMessage.id">ID</Translate>{' '}
+                  <Translate contentKey="disasterApp.officialMessage.id">ID</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
                 </th>
-                <th className="hand" onClick={sort('content')}>
-                  <Translate contentKey="disasterApp.communityMessage.content">Content</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('content')} />
+                <th className="hand" onClick={sort('title')}>
+                  <Translate contentKey="disasterApp.officialMessage.title">Title</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('title')} />
                 </th>
-                <th className="hand" onClick={sort('time_posted')}>
-                  <Translate contentKey="disasterApp.communityMessage.time_posted">Time Posted</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('time_posted')} />
+                <th className="hand" onClick={sort('body')}>
+                  <Translate contentKey="disasterApp.officialMessage.body">Body</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('body')} />
                 </th>
-                <th className="hand" onClick={sort('parentId')}>
-                  <Translate contentKey="disasterApp.communityMessage.parentId">Parent Id</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('parentId')} />
-                </th>
-                <th className="hand" onClick={sort('approved')}>
-                  <Translate contentKey="disasterApp.communityMessage.approved">Approved</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('approved')} />
+                <th className="hand" onClick={sort('timePosted')}>
+                  <Translate contentKey="disasterApp.officialMessage.timePosted">Time Posted</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('timePosted')} />
                 </th>
                 <th>
-                  <Translate contentKey="disasterApp.communityMessage.user">User</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th>
-                  <Translate contentKey="disasterApp.communityMessage.parent">Parent</Translate> <FontAwesomeIcon icon="sort" />
+                  <Translate contentKey="disasterApp.officialMessage.user">User</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
                 <th />
               </tr>
             </thead>
             <tbody>
-              {communityMessageList.map((communityMessage, i) => (
+              {officialMessageList.map((officialMessage, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
                   <td>
-                    <Button tag={Link} to={`/community-message/${communityMessage.id}`} color="link" size="sm">
-                      {communityMessage.id}
+                    <Button tag={Link} to={`/official-message/${officialMessage.id}`} color="link" size="sm">
+                      {officialMessage.id}
                     </Button>
                   </td>
-                  <td>{communityMessage.content}</td>
+                  <td>{officialMessage.title}</td>
+                  <td>{officialMessage.body}</td>
                   <td>
-                    {communityMessage.time_posted ? (
-                      <TextFormat type="date" value={communityMessage.time_posted} format={APP_DATE_FORMAT} />
+                    {officialMessage.timePosted ? (
+                      <TextFormat type="date" value={officialMessage.timePosted} format={APP_DATE_FORMAT} />
                     ) : null}
                   </td>
-                  <td>{communityMessage.parentId}</td>
-                  <td>{communityMessage.approved ? 'true' : 'false'}</td>
-                  <td>{communityMessage.user ? communityMessage.user.login : ''}</td>
-                  <td>
-                    {communityMessage.parent ? (
-                      <Link to={`/community-message/${communityMessage.parent.id}`}>{communityMessage.parent.id}</Link>
-                    ) : (
-                      ''
-                    )}
-                  </td>
+                  <td>{officialMessage.user ? officialMessage.user.login : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button
                         tag={Link}
-                        to={`/community-message/${communityMessage.id}`}
+                        to={`/official-message/${officialMessage.id}`}
                         color="info"
                         size="sm"
                         data-cy="entityDetailsButton"
@@ -179,7 +164,7 @@ export const CommunityMessage = () => {
                       </Button>
                       <Button
                         tag={Link}
-                        to={`/community-message/${communityMessage.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                        to={`/official-message/${officialMessage.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
                         color="primary"
                         size="sm"
                         data-cy="entityEditButton"
@@ -191,7 +176,7 @@ export const CommunityMessage = () => {
                       </Button>
                       <Button
                         onClick={() =>
-                          (window.location.href = `/community-message/${communityMessage.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
+                          (window.location.href = `/official-message/${officialMessage.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
                         }
                         color="danger"
                         size="sm"
@@ -211,13 +196,13 @@ export const CommunityMessage = () => {
         ) : (
           !loading && (
             <div className="alert alert-warning">
-              <Translate contentKey="disasterApp.communityMessage.home.notFound">No Community Messages found</Translate>
+              <Translate contentKey="disasterApp.officialMessage.home.notFound">No Official Messages found</Translate>
             </div>
           )
         )}
       </div>
       {totalItems ? (
-        <div className={communityMessageList && communityMessageList.length > 0 ? '' : 'd-none'}>
+        <div className={officialMessageList && officialMessageList.length > 0 ? '' : 'd-none'}>
           <div className="justify-content-center d-flex">
             <JhiItemCount page={paginationState.activePage} total={totalItems} itemsPerPage={paginationState.itemsPerPage} i18nEnabled />
           </div>
@@ -238,4 +223,4 @@ export const CommunityMessage = () => {
   );
 };
 
-export default CommunityMessage;
+export default OfficialMessage;

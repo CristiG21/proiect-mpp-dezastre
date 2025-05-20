@@ -1,10 +1,12 @@
 package com.mpp.disaster.domain;
 
-import com.mpp.disaster.domain.enumeration.MessageType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A CommunityMessage.
@@ -30,11 +32,6 @@ public class CommunityMessage implements Serializable {
     @Column(name = "time_posted", nullable = false)
     private Instant time_posted;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
-    private MessageType type;
-
     @Column(name = "parent_id")
     private Integer parentId;
 
@@ -45,6 +42,14 @@ public class CommunityMessage implements Serializable {
     @ManyToOne(optional = false)
     @NotNull
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = { "user", "parent", "replies" }, allowSetters = true)
+    private CommunityMessage parent;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
+    @JsonIgnoreProperties(value = { "user", "parent", "replies" }, allowSetters = true)
+    private Set<CommunityMessage> replies = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -87,19 +92,6 @@ public class CommunityMessage implements Serializable {
         this.time_posted = time_posted;
     }
 
-    public MessageType getType() {
-        return this.type;
-    }
-
-    public CommunityMessage type(MessageType type) {
-        this.setType(type);
-        return this;
-    }
-
-    public void setType(MessageType type) {
-        this.type = type;
-    }
-
     public Integer getParentId() {
         return this.parentId;
     }
@@ -139,6 +131,50 @@ public class CommunityMessage implements Serializable {
         return this;
     }
 
+    public CommunityMessage getParent() {
+        return this.parent;
+    }
+
+    public void setParent(CommunityMessage communityMessage) {
+        this.parent = communityMessage;
+    }
+
+    public CommunityMessage parent(CommunityMessage communityMessage) {
+        this.setParent(communityMessage);
+        return this;
+    }
+
+    public Set<CommunityMessage> getReplies() {
+        return this.replies;
+    }
+
+    public void setReplies(Set<CommunityMessage> communityMessages) {
+        if (this.replies != null) {
+            this.replies.forEach(i -> i.setParent(null));
+        }
+        if (communityMessages != null) {
+            communityMessages.forEach(i -> i.setParent(this));
+        }
+        this.replies = communityMessages;
+    }
+
+    public CommunityMessage replies(Set<CommunityMessage> communityMessages) {
+        this.setReplies(communityMessages);
+        return this;
+    }
+
+    public CommunityMessage addReplies(CommunityMessage communityMessage) {
+        this.replies.add(communityMessage);
+        communityMessage.setParent(this);
+        return this;
+    }
+
+    public CommunityMessage removeReplies(CommunityMessage communityMessage) {
+        this.replies.remove(communityMessage);
+        communityMessage.setParent(null);
+        return this;
+    }
+
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
     @Override
@@ -165,7 +201,6 @@ public class CommunityMessage implements Serializable {
             "id=" + getId() +
             ", content='" + getContent() + "'" +
             ", time_posted='" + getTime_posted() + "'" +
-            ", type='" + getType() + "'" +
             ", parentId=" + getParentId() +
             ", approved='" + getApproved() + "'" +
             "}";

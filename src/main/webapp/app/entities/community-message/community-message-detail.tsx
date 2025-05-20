@@ -49,12 +49,6 @@ export const CommunityMessageDetail = () => {
             ) : null}
           </dd>
           <dt>
-            <span id="type">
-              <Translate contentKey="disasterApp.communityMessage.type">Type</Translate>
-            </span>
-          </dt>
-          <dd>{communityMessageEntity.type}</dd>
-          <dt>
             <span id="parentId">
               <Translate contentKey="disasterApp.communityMessage.parentId">Parent Id</Translate>
             </span>
@@ -70,6 +64,10 @@ export const CommunityMessageDetail = () => {
             <Translate contentKey="disasterApp.communityMessage.user">User</Translate>
           </dt>
           <dd>{communityMessageEntity.user ? communityMessageEntity.user.login : ''}</dd>
+          <dt>
+            <Translate contentKey="disasterApp.communityMessage.parent">Parent</Translate>
+          </dt>
+          <dd>{communityMessageEntity.parent ? communityMessageEntity.parent.id : ''}</dd>
         </dl>
         <Button tag={Link} to="/community-message" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mpp.disaster.IntegrationTest;
 import com.mpp.disaster.domain.CommunityMessage;
 import com.mpp.disaster.domain.User;
-import com.mpp.disaster.domain.enumeration.MessageType;
 import com.mpp.disaster.repository.CommunityMessageRepository;
 import com.mpp.disaster.repository.UserRepository;
 import com.mpp.disaster.service.CommunityMessageService;
@@ -54,9 +53,6 @@ class CommunityMessageResourceIT {
 
     private static final Instant DEFAULT_TIME_POSTED = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_TIME_POSTED = Instant.now().truncatedTo(ChronoUnit.MILLIS);
-
-    private static final MessageType DEFAULT_TYPE = MessageType.COMMUNITY;
-    private static final MessageType UPDATED_TYPE = MessageType.OFFICIAL;
 
     private static final Integer DEFAULT_PARENT_ID = 1;
     private static final Integer UPDATED_PARENT_ID = 2;
@@ -108,7 +104,6 @@ class CommunityMessageResourceIT {
         CommunityMessage communityMessage = new CommunityMessage()
             .content(DEFAULT_CONTENT)
             .time_posted(DEFAULT_TIME_POSTED)
-            .type(DEFAULT_TYPE)
             .parentId(DEFAULT_PARENT_ID)
             .approved(DEFAULT_APPROVED);
         // Add required entity
@@ -129,7 +124,6 @@ class CommunityMessageResourceIT {
         CommunityMessage updatedCommunityMessage = new CommunityMessage()
             .content(UPDATED_CONTENT)
             .time_posted(UPDATED_TIME_POSTED)
-            .type(UPDATED_TYPE)
             .parentId(UPDATED_PARENT_ID)
             .approved(UPDATED_APPROVED);
         // Add required entity
@@ -243,25 +237,6 @@ class CommunityMessageResourceIT {
 
     @Test
     @Transactional
-    void checkTypeIsRequired() throws Exception {
-        long databaseSizeBeforeTest = getRepositoryCount();
-        // set the field null
-        communityMessage.setType(null);
-
-        // Create the CommunityMessage, which fails.
-        CommunityMessageDTO communityMessageDTO = communityMessageMapper.toDto(communityMessage);
-
-        restCommunityMessageMockMvc
-            .perform(
-                post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(communityMessageDTO))
-            )
-            .andExpect(status().isBadRequest());
-
-        assertSameRepositoryCount(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
     void checkApprovedIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
         // set the field null
@@ -293,7 +268,6 @@ class CommunityMessageResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(communityMessage.getId().intValue())))
             .andExpect(jsonPath("$.[*].content").value(hasItem(DEFAULT_CONTENT)))
             .andExpect(jsonPath("$.[*].time_posted").value(hasItem(DEFAULT_TIME_POSTED.toString())))
-            .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
             .andExpect(jsonPath("$.[*].parentId").value(hasItem(DEFAULT_PARENT_ID)))
             .andExpect(jsonPath("$.[*].approved").value(hasItem(DEFAULT_APPROVED)));
     }
@@ -329,7 +303,6 @@ class CommunityMessageResourceIT {
             .andExpect(jsonPath("$.id").value(communityMessage.getId().intValue()))
             .andExpect(jsonPath("$.content").value(DEFAULT_CONTENT))
             .andExpect(jsonPath("$.time_posted").value(DEFAULT_TIME_POSTED.toString()))
-            .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()))
             .andExpect(jsonPath("$.parentId").value(DEFAULT_PARENT_ID))
             .andExpect(jsonPath("$.approved").value(DEFAULT_APPROVED));
     }
@@ -356,7 +329,6 @@ class CommunityMessageResourceIT {
         updatedCommunityMessage
             .content(UPDATED_CONTENT)
             .time_posted(UPDATED_TIME_POSTED)
-            .type(UPDATED_TYPE)
             .parentId(UPDATED_PARENT_ID)
             .approved(UPDATED_APPROVED);
         CommunityMessageDTO communityMessageDTO = communityMessageMapper.toDto(updatedCommunityMessage);
@@ -454,8 +426,8 @@ class CommunityMessageResourceIT {
         partialUpdatedCommunityMessage.setId(communityMessage.getId());
 
         partialUpdatedCommunityMessage
+            .content(UPDATED_CONTENT)
             .time_posted(UPDATED_TIME_POSTED)
-            .type(UPDATED_TYPE)
             .parentId(UPDATED_PARENT_ID)
             .approved(UPDATED_APPROVED);
 
@@ -492,7 +464,6 @@ class CommunityMessageResourceIT {
         partialUpdatedCommunityMessage
             .content(UPDATED_CONTENT)
             .time_posted(UPDATED_TIME_POSTED)
-            .type(UPDATED_TYPE)
             .parentId(UPDATED_PARENT_ID)
             .approved(UPDATED_APPROVED);
 

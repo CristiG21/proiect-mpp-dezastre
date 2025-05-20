@@ -1,6 +1,5 @@
 package com.mpp.disaster.service.dto;
 
-import com.mpp.disaster.domain.enumeration.MessageType;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
@@ -20,9 +19,6 @@ public class CommunityMessageDTO implements Serializable {
     @NotNull
     private Instant time_posted;
 
-    @NotNull
-    private MessageType type;
-
     private Integer parentId;
 
     @NotNull
@@ -30,6 +26,8 @@ public class CommunityMessageDTO implements Serializable {
 
     @NotNull
     private UserDTO user;
+
+    private CommunityMessageDTO parent;
 
     public Long getId() {
         return id;
@@ -55,14 +53,6 @@ public class CommunityMessageDTO implements Serializable {
         this.time_posted = time_posted;
     }
 
-    public MessageType getType() {
-        return type;
-    }
-
-    public void setType(MessageType type) {
-        this.type = type;
-    }
-
     public Integer getParentId() {
         return parentId;
     }
@@ -85,6 +75,14 @@ public class CommunityMessageDTO implements Serializable {
 
     public void setUser(UserDTO user) {
         this.user = user;
+    }
+
+    public CommunityMessageDTO getParent() {
+        return parent;
+    }
+
+    public void setParent(CommunityMessageDTO parent) {
+        this.parent = parent;
     }
 
     @Override
@@ -115,10 +113,10 @@ public class CommunityMessageDTO implements Serializable {
             "id=" + getId() +
             ", content='" + getContent() + "'" +
             ", time_posted='" + getTime_posted() + "'" +
-            ", type='" + getType() + "'" +
             ", parentId=" + getParentId() +
             ", approved='" + getApproved() + "'" +
             ", user=" + getUser() +
+            ", parent=" + getParent() +
             "}";
     }
 }

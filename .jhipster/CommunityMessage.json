@@ -15,12 +15,6 @@
       "fieldValidateRules": ["required"]
     },
     {
-      "fieldName": "type",
-      "fieldType": "MessageType",
-      "fieldValidateRules": ["required"],
-      "fieldValues": "COMMUNITY,OFFICIAL"
-    },
-    {
       "fieldName": "parentId",
       "fieldType": "Integer"
     },
@@ -42,6 +36,14 @@
       "relationshipSide": "left",
       "relationshipType": "many-to-one",
       "relationshipValidateRules": ["required"]
+    },
+    {
+      "otherEntityField": "id",
+      "otherEntityName": "communityMessage",
+      "otherEntityRelationshipName": "replies",
+      "relationshipName": "parent",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
     }
   ],
   "searchEngine": "no",

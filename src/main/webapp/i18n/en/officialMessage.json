@@ -1,0 +1,27 @@
+{
+  "disasterApp": {
+    "officialMessage": {
+      "home": {
+        "title": "Official Messages",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Official Message",
+        "createOrEditLabel": "Create or edit a Official Message",
+        "notFound": "No Official Messages found"
+      },
+      "created": "A new Official Message is created with identifier {{ param }}",
+      "updated": "A Official Message is updated with identifier {{ param }}",
+      "deleted": "A Official Message is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Official Message {{ id }}?"
+      },
+      "detail": {
+        "title": "Official Message"
+      },
+      "id": "ID",
+      "title": "Title",
+      "body": "Body",
+      "timePosted": "Time Posted",
+      "user": "User"
+    }
+  }
+}

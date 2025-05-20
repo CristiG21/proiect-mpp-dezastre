@@ -8,10 +8,9 @@ import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateT
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getUsers } from 'app/shared/reducers/user-management';
-import { getEntities as getCommunityMessages } from 'app/entities/community-message/community-message.reducer';
-import { createEntity, getEntity, reset, updateEntity } from './community-message.reducer';
+import { createEntity, getEntity, reset, updateEntity } from './official-message.reducer';
 
-export const CommunityMessageUpdate = () => {
+export const OfficialMessageUpdate = () => {
   const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
@@ -20,14 +19,13 @@ export const CommunityMessageUpdate = () => {
   const isNew = id === undefined;
 
   const users = useAppSelector(state => state.userManagement.users);
-  const communityMessages = useAppSelector(state => state.communityMessage.entities);
-  const communityMessageEntity = useAppSelector(state => state.communityMessage.entity);
-  const loading = useAppSelector(state => state.communityMessage.loading);
-  const updating = useAppSelector(state => state.communityMessage.updating);
-  const updateSuccess = useAppSelector(state => state.communityMessage.updateSuccess);
+  const officialMessageEntity = useAppSelector(state => state.officialMessage.entity);
+  const loading = useAppSelector(state => state.officialMessage.loading);
+  const updating = useAppSelector(state => state.officialMessage.updating);
+  const updateSuccess = useAppSelector(state => state.officialMessage.updateSuccess);
 
   const handleClose = () => {
-    navigate(`/community-message${location.search}`);
+    navigate(`/official-message${location.search}`);
   };
 
   useEffect(() => {
@@ -38,7 +36,6 @@ export const CommunityMessageUpdate = () => {
     }
 
     dispatch(getUsers({}));
-    dispatch(getCommunityMessages({}));
   }, []);
 
   useEffect(() => {
@@ -51,16 +48,12 @@ export const CommunityMessageUpdate = () => {
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);
     }
-    values.time_posted = convertDateTimeToServer(values.time_posted);
-    if (values.parentId !== undefined && typeof values.parentId !== 'number') {
-      values.parentId = Number(values.parentId);
-    }
+    values.timePosted = convertDateTimeToServer(values.timePosted);
 
     const entity = {
-      ...communityMessageEntity,
+      ...officialMessageEntity,
       ...values,
       user: users.find(it => it.id.toString() === values.user?.toString()),
-      parent: communityMessages.find(it => it.id.toString() === values.parent?.toString()),
     };
 
     if (isNew) {
@@ -73,21 +66,20 @@ export const CommunityMessageUpdate = () => {
   const defaultValues = () =>
     isNew
       ? {
-          time_posted: displayDefaultDateTime(),
+          timePosted: displayDefaultDateTime(),
         }
       : {
-          ...communityMessageEntity,
-          time_posted: convertDateTimeFromServer(communityMessageEntity.time_posted),
-          user: communityMessageEntity?.user?.id,
-          parent: communityMessageEntity?.parent?.id,
+          ...officialMessageEntity,
+          timePosted: convertDateTimeFromServer(officialMessageEntity.timePosted),
+          user: officialMessageEntity?.user?.id,
         };
 
   return (
     <div>
       <Row className="justify-content-center">
         <Col md="8">
-          <h2 id="disasterApp.communityMessage.home.createOrEditLabel" data-cy="CommunityMessageCreateUpdateHeading">
-            <Translate contentKey="disasterApp.communityMessage.home.createOrEditLabel">Create or edit a CommunityMessage</Translate>
+          <h2 id="disasterApp.officialMessage.home.createOrEditLabel" data-cy="OfficialMessageCreateUpdateHeading">
+            <Translate contentKey="disasterApp.officialMessage.home.createOrEditLabel">Create or edit a OfficialMessage</Translate>
           </h2>
         </Col>
       </Row>
@@ -102,26 +94,33 @@ export const CommunityMessageUpdate = () => {
                   name="id"
                   required
                   readOnly
-                  id="community-message-id"
+                  id="official-message-id"
                   label={translate('global.field.id')}
                   validate={{ required: true }}
                 />
               ) : null}
               <ValidatedField
-                label={translate('disasterApp.communityMessage.content')}
-                id="community-message-content"
-                name="content"
-                data-cy="content"
+                label={translate('disasterApp.officialMessage.title')}
+                id="official-message-title"
+                name="title"
+                data-cy="title"
+                type="text"
+              />
+              <ValidatedField
+                label={translate('disasterApp.officialMessage.body')}
+                id="official-message-body"
+                name="body"
+                data-cy="body"
                 type="text"
                 validate={{
                   required: { value: true, message: translate('entity.validation.required') },
                 }}
               />
               <ValidatedField
-                label={translate('disasterApp.communityMessage.time_posted')}
-                id="community-message-time_posted"
-                name="time_posted"
-                data-cy="time_posted"
+                label={translate('disasterApp.officialMessage.timePosted')}
+                id="official-message-timePosted"
+                name="timePosted"
+                data-cy="timePosted"
                 type="datetime-local"
                 placeholder="YYYY-MM-DD HH:mm"
                 validate={{
@@ -129,25 +128,10 @@ export const CommunityMessageUpdate = () => {
                 }}
               />
               <ValidatedField
-                label={translate('disasterApp.communityMessage.parentId')}
-                id="community-message-parentId"
-                name="parentId"
-                data-cy="parentId"
-                type="text"
-              />
-              <ValidatedField
-                label={translate('disasterApp.communityMessage.approved')}
-                id="community-message-approved"
-                name="approved"
-                data-cy="approved"
-                check
-                type="checkbox"
-              />
-              <ValidatedField
-                id="community-message-user"
+                id="official-message-user"
                 name="user"
                 data-cy="user"
-                label={translate('disasterApp.communityMessage.user')}
+                label={translate('disasterApp.officialMessage.user')}
                 type="select"
                 required
               >
@@ -163,23 +147,7 @@ export const CommunityMessageUpdate = () => {
               <FormText>
                 <Translate contentKey="entity.validation.required">This field is required.</Translate>
               </FormText>
-              <ValidatedField
-                id="community-message-parent"
-                name="parent"
-                data-cy="parent"
-                label={translate('disasterApp.communityMessage.parent')}
-                type="select"
-              >
-                <option value="" key="0" />
-                {communityMessages
-                  ? communityMessages.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
-              <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/community-message" replace color="info">
+              <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/official-message" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
                 <span className="d-none d-md-inline">
@@ -200,4 +168,4 @@ export const CommunityMessageUpdate = () => {
   );
 };
 
-export default CommunityMessageUpdate;
+export default OfficialMessageUpdate;

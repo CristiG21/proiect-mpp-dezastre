@@ -20,10 +20,11 @@
       "id": "ID",
       "content": "Content",
       "time_posted": "Time Posted",
-      "type": "Type",
       "parentId": "Parent Id",
       "approved": "Approved",
-      "user": "User"
+      "user": "User",
+      "parent": "Parent",
+      "replies": "Replies"
     }
   }
 }
