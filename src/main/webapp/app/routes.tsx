@@ -29,7 +29,7 @@ const AppRoutes = () => {
         <Route path="sign-in" element={<LoginRedirect />} />
 
         {/* Center Details Route */}
-        <Route path="center/:id" element={<CenterDetail />} />
+        <Route path="center/detailing/:id" element={<CenterDetail />} />
 
         {/* Admin Routes */}
         <Route
