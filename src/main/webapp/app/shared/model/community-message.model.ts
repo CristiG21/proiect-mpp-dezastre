@@ -5,8 +5,8 @@ export interface ICommunityMessage {
   id?: number;
   content?: string;
   time_posted?: dayjs.Dayjs;
-  parentId?: number | null;
   approved?: boolean;
+  timeApproved?: dayjs.Dayjs | null;
   user?: IUser;
   parent?: ICommunityMessage | null;
 }

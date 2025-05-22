@@ -52,9 +52,7 @@ export const CommunityMessageUpdate = () => {
       values.id = Number(values.id);
     }
     values.time_posted = convertDateTimeToServer(values.time_posted);
-    if (values.parentId !== undefined && typeof values.parentId !== 'number') {
-      values.parentId = Number(values.parentId);
-    }
+    values.timeApproved = convertDateTimeToServer(values.timeApproved);
 
     const entity = {
       ...communityMessageEntity,
@@ -74,10 +72,12 @@ export const CommunityMessageUpdate = () => {
     isNew
       ? {
           time_posted: displayDefaultDateTime(),
+          timeApproved: displayDefaultDateTime(),
         }
       : {
           ...communityMessageEntity,
           time_posted: convertDateTimeFromServer(communityMessageEntity.time_posted),
+          timeApproved: convertDateTimeFromServer(communityMessageEntity.timeApproved),
           user: communityMessageEntity?.user?.id,
           parent: communityMessageEntity?.parent?.id,
         };
@@ -129,19 +129,20 @@ export const CommunityMessageUpdate = () => {
                 }}
               />
               <ValidatedField
-                label={translate('disasterApp.communityMessage.parentId')}
-                id="community-message-parentId"
-                name="parentId"
-                data-cy="parentId"
-                type="text"
-              />
-              <ValidatedField
                 label={translate('disasterApp.communityMessage.approved')}
                 id="community-message-approved"
                 name="approved"
                 data-cy="approved"
                 check
                 type="checkbox"
+              />
+              <ValidatedField
+                label={translate('disasterApp.communityMessage.timeApproved')}
+                id="community-message-timeApproved"
+                name="timeApproved"
+                data-cy="timeApproved"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
               />
               <ValidatedField
                 id="community-message-user"

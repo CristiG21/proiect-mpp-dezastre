@@ -49,17 +49,21 @@ export const CommunityMessageDetail = () => {
             ) : null}
           </dd>
           <dt>
-            <span id="parentId">
-              <Translate contentKey="disasterApp.communityMessage.parentId">Parent Id</Translate>
-            </span>
-          </dt>
-          <dd>{communityMessageEntity.parentId}</dd>
-          <dt>
             <span id="approved">
               <Translate contentKey="disasterApp.communityMessage.approved">Approved</Translate>
             </span>
           </dt>
           <dd>{communityMessageEntity.approved ? 'true' : 'false'}</dd>
+          <dt>
+            <span id="timeApproved">
+              <Translate contentKey="disasterApp.communityMessage.timeApproved">Time Approved</Translate>
+            </span>
+          </dt>
+          <dd>
+            {communityMessageEntity.timeApproved ? (
+              <TextFormat value={communityMessageEntity.timeApproved} type="date" format={APP_DATE_FORMAT} />
+            ) : null}
+          </dd>
           <dt>
             <Translate contentKey="disasterApp.communityMessage.user">User</Translate>
           </dt>

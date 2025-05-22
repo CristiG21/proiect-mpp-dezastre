@@ -3,6 +3,9 @@ package com.mpp.disaster.service.dto;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -19,15 +22,17 @@ public class CommunityMessageDTO implements Serializable {
     @NotNull
     private Instant time_posted;
 
-    private Integer parentId;
-
     @NotNull
     private Boolean approved;
+
+    private ZonedDateTime timeApproved;
 
     @NotNull
     private UserDTO user;
 
     private CommunityMessageDTO parent;
+
+    private List<CommunityMessageDTO> replies = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -53,20 +58,20 @@ public class CommunityMessageDTO implements Serializable {
         this.time_posted = time_posted;
     }
 
-    public Integer getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Integer parentId) {
-        this.parentId = parentId;
-    }
-
     public Boolean getApproved() {
         return approved;
     }
 
     public void setApproved(Boolean approved) {
         this.approved = approved;
+    }
+
+    public ZonedDateTime getTimeApproved() {
+        return timeApproved;
+    }
+
+    public void setTimeApproved(ZonedDateTime timeApproved) {
+        this.timeApproved = timeApproved;
     }
 
     public UserDTO getUser() {
@@ -113,10 +118,18 @@ public class CommunityMessageDTO implements Serializable {
             "id=" + getId() +
             ", content='" + getContent() + "'" +
             ", time_posted='" + getTime_posted() + "'" +
-            ", parentId=" + getParentId() +
             ", approved='" + getApproved() + "'" +
+            ", timeApproved='" + getTimeApproved() + "'" +
             ", user=" + getUser() +
             ", parent=" + getParent() +
             "}";
+    }
+
+    public List<CommunityMessageDTO> getReplies() {
+        return replies;
+    }
+
+    public void setReplies(List<CommunityMessageDTO> replies) {
+        this.replies = replies;
     }
 }

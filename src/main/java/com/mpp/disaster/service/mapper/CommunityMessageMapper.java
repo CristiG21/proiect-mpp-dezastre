@@ -4,6 +4,8 @@ import com.mpp.disaster.domain.CommunityMessage;
 import com.mpp.disaster.domain.User;
 import com.mpp.disaster.service.dto.CommunityMessageDTO;
 import com.mpp.disaster.service.dto.UserDTO;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.mapstruct.*;
 
 /**

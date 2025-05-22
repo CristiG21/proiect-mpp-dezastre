@@ -15,13 +15,13 @@
       "fieldValidateRules": ["required"]
     },
     {
-      "fieldName": "parentId",
-      "fieldType": "Integer"
-    },
-    {
       "fieldName": "approved",
       "fieldType": "Boolean",
       "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "timeApproved",
+      "fieldType": "ZonedDateTime"
     }
   ],
   "jpaMetamodelFiltering": false,

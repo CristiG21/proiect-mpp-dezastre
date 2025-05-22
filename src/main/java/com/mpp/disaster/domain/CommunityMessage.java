@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,14 +31,14 @@ public class CommunityMessage implements Serializable {
 
     @NotNull
     @Column(name = "time_posted", nullable = false)
-    private Instant time_posted;
-
-    @Column(name = "parent_id")
-    private Integer parentId;
+    private Instant timePosted;
 
     @NotNull
     @Column(name = "approved", nullable = false)
     private Boolean approved;
+
+    @Column(name = "time_approved")
+    private ZonedDateTime timeApproved;
 
     @ManyToOne(optional = false)
     @NotNull
@@ -80,7 +81,7 @@ public class CommunityMessage implements Serializable {
     }
 
     public Instant getTime_posted() {
-        return this.time_posted;
+        return this.timePosted;
     }
 
     public CommunityMessage time_posted(Instant time_posted) {
@@ -89,20 +90,7 @@ public class CommunityMessage implements Serializable {
     }
 
     public void setTime_posted(Instant time_posted) {
-        this.time_posted = time_posted;
-    }
-
-    public Integer getParentId() {
-        return this.parentId;
-    }
-
-    public CommunityMessage parentId(Integer parentId) {
-        this.setParentId(parentId);
-        return this;
-    }
-
-    public void setParentId(Integer parentId) {
-        this.parentId = parentId;
+        this.timePosted = time_posted;
     }
 
     public Boolean getApproved() {
@@ -116,6 +104,19 @@ public class CommunityMessage implements Serializable {
 
     public void setApproved(Boolean approved) {
         this.approved = approved;
+    }
+
+    public ZonedDateTime getTimeApproved() {
+        return this.timeApproved;
+    }
+
+    public CommunityMessage timeApproved(ZonedDateTime timeApproved) {
+        this.setTimeApproved(timeApproved);
+        return this;
+    }
+
+    public void setTimeApproved(ZonedDateTime timeApproved) {
+        this.timeApproved = timeApproved;
     }
 
     public User getUser() {
@@ -201,8 +202,8 @@ public class CommunityMessage implements Serializable {
             "id=" + getId() +
             ", content='" + getContent() + "'" +
             ", time_posted='" + getTime_posted() + "'" +
-            ", parentId=" + getParentId() +
             ", approved='" + getApproved() + "'" +
+            ", timeApproved='" + getTimeApproved() + "'" +
             "}";
     }
 }

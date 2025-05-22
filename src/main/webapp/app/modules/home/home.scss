@@ -171,33 +171,104 @@ Mapbox Popup Custom Styling
   }
 }
 
-.feed-item {
-  background: #f8f9fa;
-  border-left: 4px solid #007bff;
-  border-radius: 4px;
-  padding: 0.75rem;
-  margin-bottom: 0.75rem;
+.new-message-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 
-  p {
-    margin: 0;
-    font-size: 14px;
+  textarea {
+    width: 100%;
+    min-height: 80px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    resize: vertical;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  button {
+    align-self: flex-end;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #0056b3;
+    }
   }
 }
 
-.pagination-controls {
-  margin-top: 1rem;
-  text-align: center;
+.feed-item {
+  background: #f9f9f9;
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease;
+}
+
+.feed-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.reply-btn {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.reply-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.reply-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+
+  input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
 
   button {
-    padding: 0.4rem 1rem;
-    margin: 0 0.5rem;
-    background-color: #eee;
-    border: 1px solid #ccc;
+    align-self: flex-start;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
     cursor: pointer;
 
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.5;
+    &:hover {
+      background-color: #218838;
     }
   }
+}
+
+.replies {
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+  border-left: 2px solid #ddd;
+}
+
+.reply-item {
+  font-size: 0.9rem;
+  color: #444;
+  margin-top: 0.3rem;
 }

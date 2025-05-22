@@ -20,8 +20,8 @@
       "id": "ID",
       "content": "Content",
       "time_posted": "Time Posted",
-      "parentId": "Parent Id",
       "approved": "Approved",
+      "timeApproved": "Time Approved",
       "user": "User",
       "parent": "Parent",
       "replies": "Replies"

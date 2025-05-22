@@ -122,13 +122,13 @@ export const CommunityMessage = () => {
                   <Translate contentKey="disasterApp.communityMessage.time_posted">Time Posted</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('time_posted')} />
                 </th>
-                <th className="hand" onClick={sort('parentId')}>
-                  <Translate contentKey="disasterApp.communityMessage.parentId">Parent Id</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('parentId')} />
-                </th>
                 <th className="hand" onClick={sort('approved')}>
                   <Translate contentKey="disasterApp.communityMessage.approved">Approved</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('approved')} />
+                </th>
+                <th className="hand" onClick={sort('timeApproved')}>
+                  <Translate contentKey="disasterApp.communityMessage.timeApproved">Time Approved</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('timeApproved')} />
                 </th>
                 <th>
                   <Translate contentKey="disasterApp.communityMessage.user">User</Translate> <FontAwesomeIcon icon="sort" />
@@ -153,8 +153,12 @@ export const CommunityMessage = () => {
                       <TextFormat type="date" value={communityMessage.time_posted} format={APP_DATE_FORMAT} />
                     ) : null}
                   </td>
-                  <td>{communityMessage.parentId}</td>
                   <td>{communityMessage.approved ? 'true' : 'false'}</td>
+                  <td>
+                    {communityMessage.timeApproved ? (
+                      <TextFormat type="date" value={communityMessage.timeApproved} format={APP_DATE_FORMAT} />
+                    ) : null}
+                  </td>
                   <td>{communityMessage.user ? communityMessage.user.login : ''}</td>
                   <td>
                     {communityMessage.parent ? (

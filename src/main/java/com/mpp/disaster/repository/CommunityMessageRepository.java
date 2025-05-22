@@ -21,6 +21,8 @@ public interface CommunityMessageRepository extends JpaRepository<CommunityMessa
         return this.findOneWithToOneRelationships(id);
     }
 
+    Page<CommunityMessage> findAllByParentIsNull(Pageable pageable);
+
     default List<CommunityMessage> findAllWithEagerRelationships() {
         return this.findAllWithToOneRelationships();
     }
@@ -42,4 +44,8 @@ public interface CommunityMessageRepository extends JpaRepository<CommunityMessa
         "select communityMessage from CommunityMessage communityMessage left join fetch communityMessage.user where communityMessage.id =:id"
     )
     Optional<CommunityMessage> findOneWithToOneRelationships(@Param("id") Long id);
+
+    Page<CommunityMessage> findByParentIsNullAndApprovedTrue(Pageable pageable);
+
+    List<CommunityMessage> findByParentIdInAndApprovedTrueOrderByTimePostedDesc(List<Long> parentIds);
 }
