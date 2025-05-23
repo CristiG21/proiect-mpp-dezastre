@@ -10,6 +10,9 @@ import { setLocale } from 'app/shared/reducers/locale';
 import { AccountMenu, AdminMenu, EntitiesMenu, LocaleMenu } from '../menus';
 import { Brand, Home } from './header-components';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faComments } from '@fortawesome/free-solid-svg-icons';
+
 export interface IHeaderProps {
   isAuthenticated: boolean;
   isAdmin: boolean;
@@ -55,7 +58,7 @@ const Header = (props: IHeaderProps) => {
             {isHomePage && (
               <li className="nav-item">
                 <a className="nav-link" role="button" onClick={() => window.dispatchEvent(new Event('toggleFeed'))}>
-                  <span className="fa fa-rss me-1" />
+                  <FontAwesomeIcon icon={faComments} className="me-1" />
                   Toggle Feed
                 </a>
               </li>

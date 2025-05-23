@@ -1,11 +1,17 @@
 package com.mpp.disaster.web.rest;
 
+import com.mpp.disaster.domain.CenterTypeWrapper;
+import com.mpp.disaster.domain.PhotoURL;
+import com.mpp.disaster.domain.enumeration.CenterType;
 import com.mpp.disaster.repository.CenterRepository;
+import com.mpp.disaster.repository.CenterTypeWrapperRepository;
+import com.mpp.disaster.repository.PhotoURLRepository;
 import com.mpp.disaster.service.CenterService;
 import com.mpp.disaster.service.dto.CenterDTO;
 import com.mpp.disaster.web.rest.errors.BadRequestAlertException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,9 +46,20 @@ public class CenterResource {
 
     private final CenterRepository centerRepository;
 
-    public CenterResource(CenterService centerService, CenterRepository centerRepository) {
+    private final CenterTypeWrapperRepository centerTypeWrapperRepository;
+
+    private final PhotoURLRepository photoURLRepository;
+
+    public CenterResource(
+        CenterService centerService,
+        CenterRepository centerRepository,
+        CenterTypeWrapperRepository centerTypeWrapperRepository,
+        PhotoURLRepository photoURLRepository
+    ) {
         this.centerService = centerService;
         this.centerRepository = centerRepository;
+        this.centerTypeWrapperRepository = centerTypeWrapperRepository;
+        this.photoURLRepository = photoURLRepository;
     }
 
     /**
@@ -173,5 +190,21 @@ public class CenterResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("/{id}/types")
+    public ResponseEntity<List<CenterType>> getCenterTypes(@PathVariable Long id) {
+        List<CenterTypeWrapper> centerTypeWrappers = centerTypeWrapperRepository.findAllByCenterId(id);
+        List<CenterType> centerTypes = new ArrayList<>();
+        for (CenterTypeWrapper centerTypeWrapper : centerTypeWrappers) {
+            centerTypes.add(centerTypeWrapper.getType());
+        }
+        return ResponseEntity.ok(centerTypes);
+    }
+
+    @GetMapping("/{id}/photos")
+    public ResponseEntity<List<PhotoURL>> getPhotosForCenter(@PathVariable Long id) {
+        List<PhotoURL> photos = photoURLRepository.findAllByCenterId(id);
+        return ResponseEntity.ok(photos);
     }
 }

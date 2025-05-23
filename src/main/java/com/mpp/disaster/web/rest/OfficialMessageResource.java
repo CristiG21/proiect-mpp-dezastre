@@ -15,7 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -149,27 +151,28 @@ public class OfficialMessageResource {
         @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
     ) {
         LOG.debug("REST request to get a page of OfficialMessages");
-        Page<OfficialMessageDTO> page;
-        if (eagerload) {
-            page = officialMessageService.findAllWithEagerRelationships(pageable);
-        } else {
-            page = officialMessageService.findAll(pageable);
-        }
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
 
-    /**
-     * {@code GET  /official-messages/:id} : get the "id" officialMessage.
-     *
-     * @param id the id of the officialMessageDTO to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the officialMessageDTO, or with status {@code 404 (Not Found)}.
-     */
-    @GetMapping("/{id}")
-    public ResponseEntity<OfficialMessageDTO> getOfficialMessage(@PathVariable("id") Long id) {
-        LOG.debug("REST request to get OfficialMessage : {}", id);
-        Optional<OfficialMessageDTO> officialMessageDTO = officialMessageService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(officialMessageDTO);
+        // Force descending sort by timePosted
+        Pageable sortedPageable = PageRequest.of(
+            pageable.getPageNumber(),
+            pageable.getPageSize(),
+            Sort.by(Sort.Direction.DESC, "timePosted")
+        );
+
+        Page<OfficialMessageDTO> page;
+
+        // Load with or without relationships
+        if (eagerload) {
+            page = officialMessageService.findAllWithEagerRelationships(sortedPageable);
+        } else {
+            page = officialMessageService.findAll(sortedPageable);
+        }
+
+        // Add pagination headers (Link, X-Total-Count)
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+
+        // Return content + headers
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
