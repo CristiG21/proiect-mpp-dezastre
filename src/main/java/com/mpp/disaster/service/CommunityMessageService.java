@@ -4,10 +4,15 @@ import com.mpp.disaster.domain.CommunityMessage;
 import com.mpp.disaster.repository.CommunityMessageRepository;
 import com.mpp.disaster.service.dto.CommunityMessageDTO;
 import com.mpp.disaster.service.mapper.CommunityMessageMapper;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -117,5 +122,35 @@ public class CommunityMessageService {
     public void delete(Long id) {
         LOG.debug("Request to delete CommunityMessage : {}", id);
         communityMessageRepository.deleteById(id);
+    }
+
+    public Page<CommunityMessageDTO> findTopLevelMessagesPaginated(Pageable pageable) {
+        Page<CommunityMessage> topLevelMessages = communityMessageRepository.findByParentIsNullAndApprovedTrue(pageable);
+        List<Long> parentIds = topLevelMessages.getContent().stream().map(CommunityMessage::getId).collect(Collectors.toList());
+
+        List<CommunityMessage> replies = parentIds.isEmpty()
+            ? Collections.emptyList()
+            : communityMessageRepository.findByParentIdInAndApprovedTrueOrderByTimePostedDesc(parentIds);
+
+        Map<Long, List<CommunityMessage>> groupedReplies = replies
+            .stream()
+            .collect(Collectors.groupingBy(reply -> reply.getParent().getId()));
+
+        List<CommunityMessageDTO> dtoList = topLevelMessages
+            .getContent()
+            .stream()
+            .map(msg -> {
+                CommunityMessageDTO dto = communityMessageMapper.toDto(msg);
+                List<CommunityMessageDTO> replyDTOs = groupedReplies
+                    .getOrDefault(msg.getId(), List.of())
+                    .stream()
+                    .map(communityMessageMapper::toDto)
+                    .collect(Collectors.toList());
+                dto.setReplies(replyDTOs);
+                return dto;
+            })
+            .collect(Collectors.toList());
+
+        return new PageImpl<>(dtoList, pageable, topLevelMessages.getTotalElements());
     }
 }

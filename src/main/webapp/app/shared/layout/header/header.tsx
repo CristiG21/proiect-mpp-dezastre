@@ -4,11 +4,14 @@ import React, { useState } from 'react';
 import { Storage, Translate } from 'react-jhipster';
 import { Collapse, Nav, Navbar, NavbarToggler } from 'reactstrap';
 import LoadingBar from 'react-redux-loading-bar';
-
+import { useLocation } from 'react-router-dom';
 import { useAppDispatch } from 'app/config/store';
 import { setLocale } from 'app/shared/reducers/locale';
 import { AccountMenu, AdminMenu, EntitiesMenu, LocaleMenu } from '../menus';
 import { Brand, Home } from './header-components';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faComments } from '@fortawesome/free-solid-svg-icons';
 
 export interface IHeaderProps {
   isAuthenticated: boolean;
@@ -21,7 +24,8 @@ export interface IHeaderProps {
 
 const Header = (props: IHeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
   const dispatch = useAppDispatch();
 
   const handleLocaleChange = event => {
@@ -51,12 +55,14 @@ const Header = (props: IHeaderProps) => {
         <Collapse isOpen={menuOpen} navbar>
           <Nav id="header-tabs" className="ms-auto" navbar>
             <Home />
-            <li className="nav-item">
-              <a className="nav-link" role="button" onClick={() => window.dispatchEvent(new Event('toggleFeed'))}>
-                <span className="fa fa-rss me-1" />
-                Toggle Feed
-              </a>
-            </li>
+            {isHomePage && (
+              <li className="nav-item">
+                <a className="nav-link" role="button" onClick={() => window.dispatchEvent(new Event('toggleFeed'))}>
+                  <FontAwesomeIcon icon={faComments} className="me-1" />
+                  Toggle Feed
+                </a>
+              </li>
+            )}
             {props.isAuthenticated && <EntitiesMenu />}
             {props.isAuthenticated && props.isAdmin && <AdminMenu showOpenAPI={props.isOpenAPIEnabled} />}
             <LocaleMenu currentLocale={props.currentLocale} onClick={handleLocaleChange} />

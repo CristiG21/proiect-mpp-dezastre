@@ -8,7 +8,7 @@ import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateT
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getUsers } from 'app/shared/reducers/user-management';
-import { MessageType } from 'app/shared/model/enumerations/message-type.model';
+import { getEntities as getCommunityMessages } from 'app/entities/community-message/community-message.reducer';
 import { createEntity, getEntity, reset, updateEntity } from './community-message.reducer';
 
 export const CommunityMessageUpdate = () => {
@@ -20,11 +20,11 @@ export const CommunityMessageUpdate = () => {
   const isNew = id === undefined;
 
   const users = useAppSelector(state => state.userManagement.users);
+  const communityMessages = useAppSelector(state => state.communityMessage.entities);
   const communityMessageEntity = useAppSelector(state => state.communityMessage.entity);
   const loading = useAppSelector(state => state.communityMessage.loading);
   const updating = useAppSelector(state => state.communityMessage.updating);
   const updateSuccess = useAppSelector(state => state.communityMessage.updateSuccess);
-  const messageTypeValues = Object.keys(MessageType);
 
   const handleClose = () => {
     navigate(`/community-message${location.search}`);
@@ -38,6 +38,7 @@ export const CommunityMessageUpdate = () => {
     }
 
     dispatch(getUsers({}));
+    dispatch(getCommunityMessages({}));
   }, []);
 
   useEffect(() => {
@@ -51,14 +52,13 @@ export const CommunityMessageUpdate = () => {
       values.id = Number(values.id);
     }
     values.time_posted = convertDateTimeToServer(values.time_posted);
-    if (values.parentId !== undefined && typeof values.parentId !== 'number') {
-      values.parentId = Number(values.parentId);
-    }
+    values.timeApproved = convertDateTimeToServer(values.timeApproved);
 
     const entity = {
       ...communityMessageEntity,
       ...values,
       user: users.find(it => it.id.toString() === values.user?.toString()),
+      parent: communityMessages.find(it => it.id.toString() === values.parent?.toString()),
     };
 
     if (isNew) {
@@ -72,12 +72,14 @@ export const CommunityMessageUpdate = () => {
     isNew
       ? {
           time_posted: displayDefaultDateTime(),
+          timeApproved: displayDefaultDateTime(),
         }
       : {
-          type: 'COMMUNITY',
           ...communityMessageEntity,
           time_posted: convertDateTimeFromServer(communityMessageEntity.time_posted),
+          timeApproved: convertDateTimeFromServer(communityMessageEntity.timeApproved),
           user: communityMessageEntity?.user?.id,
+          parent: communityMessageEntity?.parent?.id,
         };
 
   return (
@@ -127,32 +129,20 @@ export const CommunityMessageUpdate = () => {
                 }}
               />
               <ValidatedField
-                label={translate('disasterApp.communityMessage.type')}
-                id="community-message-type"
-                name="type"
-                data-cy="type"
-                type="select"
-              >
-                {messageTypeValues.map(messageType => (
-                  <option value={messageType} key={messageType}>
-                    {translate(`disasterApp.MessageType.${messageType}`)}
-                  </option>
-                ))}
-              </ValidatedField>
-              <ValidatedField
-                label={translate('disasterApp.communityMessage.parentId')}
-                id="community-message-parentId"
-                name="parentId"
-                data-cy="parentId"
-                type="text"
-              />
-              <ValidatedField
                 label={translate('disasterApp.communityMessage.approved')}
                 id="community-message-approved"
                 name="approved"
                 data-cy="approved"
                 check
                 type="checkbox"
+              />
+              <ValidatedField
+                label={translate('disasterApp.communityMessage.timeApproved')}
+                id="community-message-timeApproved"
+                name="timeApproved"
+                data-cy="timeApproved"
+                type="datetime-local"
+                placeholder="YYYY-MM-DD HH:mm"
               />
               <ValidatedField
                 id="community-message-user"
@@ -174,6 +164,22 @@ export const CommunityMessageUpdate = () => {
               <FormText>
                 <Translate contentKey="entity.validation.required">This field is required.</Translate>
               </FormText>
+              <ValidatedField
+                id="community-message-parent"
+                name="parent"
+                data-cy="parent"
+                label={translate('disasterApp.communityMessage.parent')}
+                type="select"
+              >
+                <option value="" key="0" />
+                {communityMessages
+                  ? communityMessages.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/community-message" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

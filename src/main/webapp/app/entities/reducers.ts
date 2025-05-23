@@ -3,6 +3,7 @@ import centerTypeWrapper from 'app/entities/center-type-wrapper/center-type-wrap
 import disaster from 'app/entities/disaster/disaster.reducer';
 import photoURL from 'app/entities/photo-url/photo-url.reducer';
 import communityMessage from 'app/entities/community-message/community-message.reducer';
+import officialMessage from 'app/entities/official-message/official-message.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 const entitiesReducers = {
@@ -11,6 +12,7 @@ const entitiesReducers = {
   disaster,
   communityMessage,
   photoURL,
+  officialMessage,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
 };
 

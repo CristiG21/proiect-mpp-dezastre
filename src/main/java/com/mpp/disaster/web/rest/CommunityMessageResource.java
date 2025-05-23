@@ -15,9 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -27,6 +30,7 @@ import tech.jhipster.web.util.ResponseUtil;
 /**
  * REST controller for managing {@link com.mpp.disaster.domain.CommunityMessage}.
  */
+@PreAuthorize("hasRole('ROLE_USER')")
 @RestController
 @RequestMapping("/api/community-messages")
 public class CommunityMessageResource {
@@ -188,5 +192,20 @@ public class CommunityMessageResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    @GetMapping("/paged")
+    public ResponseEntity<?> getMessages(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size,
+        @RequestParam(defaultValue = "false") boolean onlyTopLevel
+    ) {
+        if (onlyTopLevel) {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("timePosted").descending());
+            Page<CommunityMessageDTO> result = communityMessageService.findTopLevelMessagesPaginated(pageable);
+            return ResponseEntity.ok().body(result);
+        }
+
+        return ResponseEntity.badRequest().body("Fetching all messages is not implemented.");
     }
 }

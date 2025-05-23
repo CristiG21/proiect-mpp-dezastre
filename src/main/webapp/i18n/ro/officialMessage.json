@@ -1,0 +1,27 @@
+{
+  "disasterApp": {
+    "officialMessage": {
+      "home": {
+        "title": "Official Messages",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Creeare o nouă entitate Official Message",
+        "createOrEditLabel": "Creeare sau editare Official Message",
+        "notFound": "No Official Messages found"
+      },
+      "created": "A fost creată o nouă entitate Official Message cu identificatorul {{ param }}",
+      "updated": "Official Message cu identificatorul {{ param }} a fost actualizată",
+      "deleted": "Official Message cu identificatorul {{ param }} a fost ștearsă",
+      "delete": {
+        "question": "Sunteți sigur că doriți să ștergeți Official Message {{ id }}?"
+      },
+      "detail": {
+        "title": "Official Message"
+      },
+      "id": "ID",
+      "title": "Title",
+      "body": "Body",
+      "timePosted": "Time Posted",
+      "user": "User"
+    }
+  }
+}

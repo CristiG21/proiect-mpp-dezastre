@@ -1,9 +1,11 @@
 package com.mpp.disaster.service.dto;
 
-import com.mpp.disaster.domain.enumeration.MessageType;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -21,15 +23,16 @@ public class CommunityMessageDTO implements Serializable {
     private Instant time_posted;
 
     @NotNull
-    private MessageType type;
-
-    private Integer parentId;
-
-    @NotNull
     private Boolean approved;
+
+    private ZonedDateTime timeApproved;
 
     @NotNull
     private UserDTO user;
+
+    private CommunityMessageDTO parent;
+
+    private List<CommunityMessageDTO> replies = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -55,22 +58,6 @@ public class CommunityMessageDTO implements Serializable {
         this.time_posted = time_posted;
     }
 
-    public MessageType getType() {
-        return type;
-    }
-
-    public void setType(MessageType type) {
-        this.type = type;
-    }
-
-    public Integer getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Integer parentId) {
-        this.parentId = parentId;
-    }
-
     public Boolean getApproved() {
         return approved;
     }
@@ -79,12 +66,28 @@ public class CommunityMessageDTO implements Serializable {
         this.approved = approved;
     }
 
+    public ZonedDateTime getTimeApproved() {
+        return timeApproved;
+    }
+
+    public void setTimeApproved(ZonedDateTime timeApproved) {
+        this.timeApproved = timeApproved;
+    }
+
     public UserDTO getUser() {
         return user;
     }
 
     public void setUser(UserDTO user) {
         this.user = user;
+    }
+
+    public CommunityMessageDTO getParent() {
+        return parent;
+    }
+
+    public void setParent(CommunityMessageDTO parent) {
+        this.parent = parent;
     }
 
     @Override
@@ -115,10 +118,18 @@ public class CommunityMessageDTO implements Serializable {
             "id=" + getId() +
             ", content='" + getContent() + "'" +
             ", time_posted='" + getTime_posted() + "'" +
-            ", type='" + getType() + "'" +
-            ", parentId=" + getParentId() +
             ", approved='" + getApproved() + "'" +
+            ", timeApproved='" + getTimeApproved() + "'" +
             ", user=" + getUser() +
+            ", parent=" + getParent() +
             "}";
+    }
+
+    public List<CommunityMessageDTO> getReplies() {
+        return replies;
+    }
+
+    public void setReplies(List<CommunityMessageDTO> replies) {
+        this.replies = replies;
     }
 }

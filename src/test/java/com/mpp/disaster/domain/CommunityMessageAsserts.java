@@ -1,5 +1,6 @@
 package com.mpp.disaster.domain;
 
+import static com.mpp.disaster.domain.AssertUtils.zonedDataTimeSameInstant;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CommunityMessageAsserts {
@@ -49,9 +50,13 @@ public class CommunityMessageAsserts {
             .as("Verify CommunityMessage relevant properties")
             .satisfies(a -> assertThat(a.getContent()).as("check content").isEqualTo(expected.getContent()))
             .satisfies(a -> assertThat(a.getTime_posted()).as("check time_posted").isEqualTo(expected.getTime_posted()))
-            .satisfies(a -> assertThat(a.getType()).as("check type").isEqualTo(expected.getType()))
-            .satisfies(a -> assertThat(a.getParentId()).as("check parentId").isEqualTo(expected.getParentId()))
-            .satisfies(a -> assertThat(a.getApproved()).as("check approved").isEqualTo(expected.getApproved()));
+            .satisfies(a -> assertThat(a.getApproved()).as("check approved").isEqualTo(expected.getApproved()))
+            .satisfies(a ->
+                assertThat(a.getTimeApproved())
+                    .as("check timeApproved")
+                    .usingComparator(zonedDataTimeSameInstant)
+                    .isEqualTo(expected.getTimeApproved())
+            );
     }
 
     /**
@@ -61,6 +66,8 @@ public class CommunityMessageAsserts {
      * @param actual the actual entity
      */
     public static void assertCommunityMessageUpdatableRelationshipsEquals(CommunityMessage expected, CommunityMessage actual) {
-        // empty method
+        assertThat(actual)
+            .as("Verify CommunityMessage relationships")
+            .satisfies(a -> assertThat(a.getParent()).as("check parent").isEqualTo(expected.getParent()));
     }
 }

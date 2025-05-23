@@ -282,8 +282,6 @@ class PhotoURLResourceIT {
         PhotoURL partialUpdatedPhotoURL = new PhotoURL();
         partialUpdatedPhotoURL.setId(photoURL.getId());
 
-        partialUpdatedPhotoURL.url(UPDATED_URL);
-
         restPhotoURLMockMvc
             .perform(
                 patch(ENTITY_API_URL_ID, partialUpdatedPhotoURL.getId())
