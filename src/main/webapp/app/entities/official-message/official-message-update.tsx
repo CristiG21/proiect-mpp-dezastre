@@ -27,7 +27,12 @@ export const OfficialMessageUpdate = () => {
   const handleClose = () => {
     navigate(`/official-message${location.search}`);
   };
-
+  const getLocalDateTimeForInput = () => {
+    const now = new Date();
+    const offset = now.getTimezoneOffset();
+    const localDate = new Date(now.getTime() - offset * 60 * 1000);
+    return localDate.toISOString().slice(0, 16); // returns "YYYY-MM-DDTHH:mm"
+  };
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
@@ -66,7 +71,7 @@ export const OfficialMessageUpdate = () => {
   const defaultValues = () =>
     isNew
       ? {
-          timePosted: displayDefaultDateTime(),
+          timePosted: getLocalDateTimeForInput(),
         }
       : {
           ...officialMessageEntity,
