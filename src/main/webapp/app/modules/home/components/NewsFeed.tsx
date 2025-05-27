@@ -64,7 +64,8 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
 
           const mapped = officialMessages.map(msg => ({ ...msg, type: 'OFFICIAL' }));
           setMessages(mapped);
-          setHasMore(!res.data.last); // official messages aren't paginated
+          const totalPages = res.data.totalPages ?? 1;
+          setHasMore(page < totalPages); // official messages aren't paginated
         }
       } catch (err) {
         console.error('Failed to fetch messages:', err);

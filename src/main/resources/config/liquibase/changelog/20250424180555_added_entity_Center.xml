@@ -32,6 +32,15 @@
             <column name="available_seats" type="integer">
                 <constraints nullable="true" />
             </column>
+            <column name="open_time" type="${timeType}">
+                <constraints nullable="false" />
+            </column>
+            <column name="close_time" type="${timeType}">
+                <constraints nullable="false" />
+            </column>
+            <column name="user_id" type="varchar(100)">
+                <constraints nullable="true" />
+            </column>
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
         </createTable>
     </changeSet>
@@ -59,6 +68,8 @@
             <column name="status" type="boolean"/>
             <column name="description" type="string"/>
             <column name="available_seats" type="numeric"/>
+            <column name="open_time" type="time"/>
+            <column name="close_time" type="time"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
         </loadData>
     </changeSet>

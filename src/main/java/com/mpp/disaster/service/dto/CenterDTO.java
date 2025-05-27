@@ -1,6 +1,8 @@
 package com.mpp.disaster.service.dto;
 
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
+import java.time.LocalTime;
 import java.util.Objects;
 
 /**
@@ -22,6 +24,14 @@ public class CenterDTO implements Serializable {
     private String description;
 
     private Integer availableSeats;
+
+    @NotNull
+    private LocalTime openTime;
+
+    @NotNull
+    private LocalTime closeTime;
+
+    private UserDTO user;
 
     public Long getId() {
         return id;
@@ -79,6 +89,30 @@ public class CenterDTO implements Serializable {
         this.availableSeats = availableSeats;
     }
 
+    public LocalTime getOpenTime() {
+        return openTime;
+    }
+
+    public void setOpenTime(LocalTime openTime) {
+        this.openTime = openTime;
+    }
+
+    public LocalTime getCloseTime() {
+        return closeTime;
+    }
+
+    public void setCloseTime(LocalTime closeTime) {
+        this.closeTime = closeTime;
+    }
+
+    public UserDTO getUser() {
+        return user;
+    }
+
+    public void setUser(UserDTO user) {
+        this.user = user;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -111,6 +145,9 @@ public class CenterDTO implements Serializable {
             ", status='" + getStatus() + "'" +
             ", description='" + getDescription() + "'" +
             ", availableSeats=" + getAvailableSeats() +
+            ", openTime='" + getOpenTime() + "'" +
+            ", closeTime='" + getCloseTime() + "'" +
+            ", user=" + getUser() +
             "}";
     }
 }

@@ -24,7 +24,10 @@
       "status": "Status",
       "description": "Description",
       "availableSeats": "Available Seats",
+      "openTime": "Open Time",
+      "closeTime": "Close Time",
       "types": "Types",
+      "user": "User",
       "photoUrl": "Photo Url"
     }
   }

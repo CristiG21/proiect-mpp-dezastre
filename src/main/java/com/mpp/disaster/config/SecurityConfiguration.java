@@ -90,6 +90,8 @@ public class SecurityConfiguration {
                     .requestMatchers(mvc.pattern("/api/auth-info")).permitAll()
                     .requestMatchers(mvc.pattern("/api/admin/**")).hasAuthority(AuthoritiesConstants.ADMIN)
                     .requestMatchers(mvc.pattern("/api/community-messages/paged")).permitAll()
+                    .requestMatchers(mvc.pattern("/api/center-type-wrappers/**")).permitAll()
+                    .requestMatchers(mvc.pattern("/api/photo-urls/**")).permitAll()
                     .requestMatchers(mvc.pattern("/api/community-messages/**")).permitAll()
                     .requestMatchers(mvc.pattern("/api/centers/**")).permitAll()
                     .requestMatchers(mvc.pattern("/api/disasters/**")).permitAll()

@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
+import { getUsers } from 'app/shared/reducers/user-management';
 import { createEntity, getEntity, reset, updateEntity } from './center.reducer';
 
 export const CenterUpdate = () => {
@@ -16,6 +17,7 @@ export const CenterUpdate = () => {
   const { id } = useParams<'id'>();
   const isNew = id === undefined;
 
+  const users = useAppSelector(state => state.userManagement.users);
   const centerEntity = useAppSelector(state => state.center.entity);
   const loading = useAppSelector(state => state.center.loading);
   const updating = useAppSelector(state => state.center.updating);
@@ -31,6 +33,8 @@ export const CenterUpdate = () => {
     } else {
       dispatch(getEntity(id));
     }
+
+    dispatch(getUsers({}));
   }, []);
 
   useEffect(() => {
@@ -56,6 +60,7 @@ export const CenterUpdate = () => {
     const entity = {
       ...centerEntity,
       ...values,
+      user: users.find(it => it.id.toString() === values.user?.toString()),
     };
 
     if (isNew) {
@@ -70,6 +75,7 @@ export const CenterUpdate = () => {
       ? {}
       : {
           ...centerEntity,
+          user: centerEntity?.user?.id,
         };
 
   return (
@@ -134,6 +140,38 @@ export const CenterUpdate = () => {
                 data-cy="availableSeats"
                 type="text"
               />
+              <ValidatedField
+                label={translate('disasterApp.center.openTime')}
+                id="center-openTime"
+                name="openTime"
+                data-cy="openTime"
+                type="time"
+                placeholder="HH:mm"
+                validate={{
+                  required: { value: true, message: translate('entity.validation.required') },
+                }}
+              />
+              <ValidatedField
+                label={translate('disasterApp.center.closeTime')}
+                id="center-closeTime"
+                name="closeTime"
+                data-cy="closeTime"
+                type="time"
+                placeholder="HH:mm"
+                validate={{
+                  required: { value: true, message: translate('entity.validation.required') },
+                }}
+              />
+              <ValidatedField id="center-user" name="user" data-cy="user" label={translate('disasterApp.center.user')} type="select">
+                <option value="" key="0" />
+                {users
+                  ? users.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.login}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/center" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

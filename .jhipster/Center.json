@@ -30,6 +30,16 @@
       "fieldName": "availableSeats",
       "fieldType": "Integer",
       "fieldValidateRules": []
+    },
+    {
+      "fieldName": "openTime",
+      "fieldType": "LocalTime",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "closeTime",
+      "fieldType": "LocalTime",
+      "fieldValidateRules": ["required"]
     }
   ],
   "name": "Center",
@@ -41,6 +51,13 @@
       "relationshipName": "types",
       "relationshipSide": "left",
       "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "login",
+      "otherEntityName": "user",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
     }
   ],
   "searchEngine": "no",

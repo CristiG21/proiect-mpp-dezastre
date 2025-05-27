@@ -4,6 +4,7 @@ import static com.mpp.disaster.domain.CenterAsserts.*;
 import static com.mpp.disaster.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -12,16 +13,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mpp.disaster.IntegrationTest;
 import com.mpp.disaster.domain.Center;
 import com.mpp.disaster.repository.CenterRepository;
+import com.mpp.disaster.repository.UserRepository;
+import com.mpp.disaster.service.CenterService;
 import com.mpp.disaster.service.dto.CenterDTO;
 import com.mpp.disaster.service.mapper.CenterMapper;
 import jakarta.persistence.EntityManager;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Integration tests for the {@link CenterResource} REST controller.
  */
 @IntegrationTest
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 class CenterResourceIT {
@@ -53,6 +64,12 @@ class CenterResourceIT {
     private static final Integer DEFAULT_AVAILABLE_SEATS = 1;
     private static final Integer UPDATED_AVAILABLE_SEATS = 2;
 
+    private static final LocalTime DEFAULT_OPEN_TIME = LocalTime.NOON;
+    private static final LocalTime UPDATED_OPEN_TIME = LocalTime.MAX.withNano(0);
+
+    private static final LocalTime DEFAULT_CLOSE_TIME = LocalTime.NOON;
+    private static final LocalTime UPDATED_CLOSE_TIME = LocalTime.MAX.withNano(0);
+
     private static final String ENTITY_API_URL = "/api/centers";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
 
@@ -66,7 +83,16 @@ class CenterResourceIT {
     private CenterRepository centerRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Mock
+    private CenterRepository centerRepositoryMock;
+
+    @Autowired
     private CenterMapper centerMapper;
+
+    @Mock
+    private CenterService centerServiceMock;
 
     @Autowired
     private EntityManager em;
@@ -91,7 +117,9 @@ class CenterResourceIT {
             .latitude(DEFAULT_LATITUDE)
             .status(DEFAULT_STATUS)
             .description(DEFAULT_DESCRIPTION)
-            .availableSeats(DEFAULT_AVAILABLE_SEATS);
+            .availableSeats(DEFAULT_AVAILABLE_SEATS)
+            .openTime(DEFAULT_OPEN_TIME)
+            .closeTime(DEFAULT_CLOSE_TIME);
     }
 
     /**
@@ -107,7 +135,9 @@ class CenterResourceIT {
             .latitude(UPDATED_LATITUDE)
             .status(UPDATED_STATUS)
             .description(UPDATED_DESCRIPTION)
-            .availableSeats(UPDATED_AVAILABLE_SEATS);
+            .availableSeats(UPDATED_AVAILABLE_SEATS)
+            .openTime(UPDATED_OPEN_TIME)
+            .closeTime(UPDATED_CLOSE_TIME);
     }
 
     @BeforeEach
@@ -121,6 +151,7 @@ class CenterResourceIT {
             centerRepository.delete(insertedCenter);
             insertedCenter = null;
         }
+        userRepository.deleteAll();
     }
 
     @Test
@@ -167,6 +198,40 @@ class CenterResourceIT {
 
     @Test
     @Transactional
+    void checkOpenTimeIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        // set the field null
+        center.setOpenTime(null);
+
+        // Create the Center, which fails.
+        CenterDTO centerDTO = centerMapper.toDto(center);
+
+        restCenterMockMvc
+            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(centerDTO)))
+            .andExpect(status().isBadRequest());
+
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    void checkCloseTimeIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        // set the field null
+        center.setCloseTime(null);
+
+        // Create the Center, which fails.
+        CenterDTO centerDTO = centerMapper.toDto(center);
+
+        restCenterMockMvc
+            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(centerDTO)))
+            .andExpect(status().isBadRequest());
+
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     void getAllCenters() throws Exception {
         // Initialize the database
         insertedCenter = centerRepository.saveAndFlush(center);
@@ -182,7 +247,26 @@ class CenterResourceIT {
             .andExpect(jsonPath("$.[*].latitude").value(hasItem(DEFAULT_LATITUDE)))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
-            .andExpect(jsonPath("$.[*].availableSeats").value(hasItem(DEFAULT_AVAILABLE_SEATS)));
+            .andExpect(jsonPath("$.[*].availableSeats").value(hasItem(DEFAULT_AVAILABLE_SEATS)))
+            .andExpect(jsonPath("$.[*].openTime").value(hasItem(DEFAULT_OPEN_TIME.toString())))
+            .andExpect(jsonPath("$.[*].closeTime").value(hasItem(DEFAULT_CLOSE_TIME.toString())));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllCentersWithEagerRelationshipsIsEnabled() throws Exception {
+        when(centerServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restCenterMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(centerServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllCentersWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(centerServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restCenterMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
+        verify(centerRepositoryMock, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
@@ -202,7 +286,9 @@ class CenterResourceIT {
             .andExpect(jsonPath("$.latitude").value(DEFAULT_LATITUDE))
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
-            .andExpect(jsonPath("$.availableSeats").value(DEFAULT_AVAILABLE_SEATS));
+            .andExpect(jsonPath("$.availableSeats").value(DEFAULT_AVAILABLE_SEATS))
+            .andExpect(jsonPath("$.openTime").value(DEFAULT_OPEN_TIME.toString()))
+            .andExpect(jsonPath("$.closeTime").value(DEFAULT_CLOSE_TIME.toString()));
     }
 
     @Test
@@ -230,7 +316,9 @@ class CenterResourceIT {
             .latitude(UPDATED_LATITUDE)
             .status(UPDATED_STATUS)
             .description(UPDATED_DESCRIPTION)
-            .availableSeats(UPDATED_AVAILABLE_SEATS);
+            .availableSeats(UPDATED_AVAILABLE_SEATS)
+            .openTime(UPDATED_OPEN_TIME)
+            .closeTime(UPDATED_CLOSE_TIME);
         CenterDTO centerDTO = centerMapper.toDto(updatedCenter);
 
         restCenterMockMvc
@@ -323,7 +411,12 @@ class CenterResourceIT {
         Center partialUpdatedCenter = new Center();
         partialUpdatedCenter.setId(center.getId());
 
-        partialUpdatedCenter.longitude(UPDATED_LONGITUDE).latitude(UPDATED_LATITUDE).status(UPDATED_STATUS);
+        partialUpdatedCenter
+            .longitude(UPDATED_LONGITUDE)
+            .latitude(UPDATED_LATITUDE)
+            .status(UPDATED_STATUS)
+            .openTime(UPDATED_OPEN_TIME)
+            .closeTime(UPDATED_CLOSE_TIME);
 
         restCenterMockMvc
             .perform(
@@ -358,7 +451,9 @@ class CenterResourceIT {
             .latitude(UPDATED_LATITUDE)
             .status(UPDATED_STATUS)
             .description(UPDATED_DESCRIPTION)
-            .availableSeats(UPDATED_AVAILABLE_SEATS);
+            .availableSeats(UPDATED_AVAILABLE_SEATS)
+            .openTime(UPDATED_OPEN_TIME)
+            .closeTime(UPDATED_CLOSE_TIME);
 
         restCenterMockMvc
             .perform(

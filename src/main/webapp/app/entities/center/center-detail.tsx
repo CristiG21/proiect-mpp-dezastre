@@ -67,6 +67,22 @@ export const CenterDetail = () => {
             </span>
           </dt>
           <dd>{centerEntity.availableSeats}</dd>
+          <dt>
+            <span id="openTime">
+              <Translate contentKey="disasterApp.center.openTime">Open Time</Translate>
+            </span>
+          </dt>
+          <dd>{centerEntity.openTime}</dd>
+          <dt>
+            <span id="closeTime">
+              <Translate contentKey="disasterApp.center.closeTime">Close Time</Translate>
+            </span>
+          </dt>
+          <dd>{centerEntity.closeTime}</dd>
+          <dt>
+            <Translate contentKey="disasterApp.center.user">User</Translate>
+          </dt>
+          <dd>{centerEntity.user ? centerEntity.user.login : ''}</dd>
         </dl>
         <Button tag={Link} to="/center" replace color="info" data-cy="entityDetailsBackButton">
           <FontAwesomeIcon icon="arrow-left" />{' '}

@@ -9,6 +9,7 @@ import Disaster from './disaster';
 import PhotoURL from './photo-url';
 import CommunityMessage from './community-message';
 import OfficialMessage from './official-message';
+import MyCenters from 'app/entities/center/my-centers';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 export default () => {
@@ -22,6 +23,7 @@ export default () => {
         <Route path="community-message/*" element={<CommunityMessage />} />
         <Route path="photo-url/*" element={<PhotoURL />} />
         <Route path="official-message/*" element={<OfficialMessage />} />
+        <Route path="my-centers" element={<MyCenters />} />
         {/* jhipster-needle-add-route-path - JHipster will add routes here */}
       </ErrorBoundaryRoutes>
     </div>
