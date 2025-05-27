@@ -23,6 +23,12 @@
     <include file="config/liquibase/changelog/20250513213131_added_entity_constraints_PhotoURL.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250516154142_added_entity_constraints_CommunityMessage.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20250520193605_added_entity_constraints_OfficialMessage.xml" relativeToChangelogFile="false"/>
-    <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
+  <include file="config/liquibase/changelog/20250527_add_userid_column_to_center.xml" relativeToChangelogFile="false"/>
+  <include file="config/liquibase/changelog/20250527_add_opening_closing_hours.xml" relativeToChangelogFile="false"/>
+
+  <include file="config/liquibase/changelog/20250424180555_added_entity_constraints_Center.xml" relativeToChangelogFile="false"/>
+
+
+  <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

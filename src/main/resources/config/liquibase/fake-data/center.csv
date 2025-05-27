@@ -1,11 +1,11 @@
-id;name;longitude;latitude;status;description;available_seats
-1;with against;2488.25;28952.15;false;correctly;7926
-2;masticate;17247.97;3918.47;true;uh-huh small;15543
-3;plagiarise ethical;376.77;2521.94;true;fencing never portray;8503
-4;mmm alliance SUV;30238.34;3230.52;false;book;11305
-5;upwardly unexpectedly;18634.87;9338.7;true;instead aw;11884
-6;dusk;301.03;20485.17;true;what deceivingly furthermore;31410
-7;failing quip quizzically;7312.27;5659.4;true;briskly;10414
-8;woot aboard;12724.65;18748.52;false;indeed;28696
-9;meanwhile serenade;29587.96;21738.44;true;er solemnly;5500
-10;co-producer that anenst;32660.26;20524.79;true;outlying trivial;3291
+id;name;longitude;latitude;status;description;available_seats;open_time;close_time
+1;with against;2488.25;28952.15;false;correctly;7926;23:42:00;21:44:00
+2;carnival alert;20221.57;26359.06;false;jealously;27878;01:43:00;04:12:00
+3;before times;14392.05;13218.64;true;save;7857;01:38:00;06:37:00
+4;far-off surprisingly;23862.08;28782.33;false;sedately rebuff;6841;18:49:00;15:31:00
+5;yuck until;19424.02;30143.36;false;worth zowie heavenly;5605;19:27:00;00:00:00
+6;between tenderly breastplate;5155.54;202.84;false;yowza minor why;32736;19:56:00;21:22:00
+7;lest healthily intent;14226.51;20243.25;true;aw underneath surprisingly;10517;16:10:00;04:35:00
+8;tentacle energetically;16288.18;25772.58;false;even incidentally now;20675;15:10:00;21:59:00
+9;divert towards;19196.96;29234.76;true;healthily brochure opposite;25242;06:00:00;05:36:00
+10;yowza potable intent;13319.47;15827.08;false;boohoo evince pfft;12372;01:57:00;11:08:00

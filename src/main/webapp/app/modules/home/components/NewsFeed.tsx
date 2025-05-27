@@ -57,18 +57,20 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
 
         if (activeTab === 'official') {
           const res = await axios.get('/api/official-messages', {
-            params: { page: 0, size: 20 },
+            params: { page, size: 1 },
           });
 
           const officialMessages = Array.isArray(res.data.content) ? res.data.content : Array.isArray(res.data) ? res.data : [];
 
           const mapped = officialMessages.map(msg => ({ ...msg, type: 'OFFICIAL' }));
           setMessages(mapped);
-          setHasMore(false); // official messages aren't paginated
+          const totalPages = res.data.totalPages ?? 1;
+          setHasMore(page < totalPages); // official messages aren't paginated
         }
       } catch (err) {
         console.error('Failed to fetch messages:', err);
         setMessages([]);
+        setHasMore(false);
       } finally {
         setLoadingPage(false);
       }
@@ -80,12 +82,12 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
   const postCommunityMessage = async () => {
     const content = newMessageContent.trim();
     if (!content) return;
-
+    const isAdmin = account?.authorities?.includes('ROLE_ADMIN');
     try {
       await axios.post('/api/community-messages', {
         content,
         time_posted: new Date().toISOString(),
-        approved: false,
+        approved: isAdmin,
         parent: null,
         user: { id: account.id, login: account.login },
         replies: [],
@@ -149,6 +151,13 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
           Official
         </button>
       </div>
+      {activeTab === 'official' && account?.authorities?.includes('ROLE_ADMIN') && (
+        <div className="new-message-wrapper">
+          <button className="new-message-btn" onClick={() => navigate('official-message/new')}>
+            + Add Official Message
+          </button>
+        </div>
+      )}
 
       {activeTab === 'community' && !showNewMessageInput && (
         <div className="new-message-wrapper">

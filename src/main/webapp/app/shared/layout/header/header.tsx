@@ -4,14 +4,14 @@ import React, { useState } from 'react';
 import { Storage, Translate } from 'react-jhipster';
 import { Collapse, Nav, Navbar, NavbarToggler } from 'reactstrap';
 import LoadingBar from 'react-redux-loading-bar';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useAppDispatch } from 'app/config/store';
 import { setLocale } from 'app/shared/reducers/locale';
 import { AccountMenu, AdminMenu, EntitiesMenu, LocaleMenu } from '../menus';
 import { Brand, Home } from './header-components';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComments } from '@fortawesome/free-solid-svg-icons';
+import { faComments, faFlag } from '@fortawesome/free-solid-svg-icons';
 
 export interface IHeaderProps {
   isAuthenticated: boolean;
@@ -61,6 +61,14 @@ const Header = (props: IHeaderProps) => {
                   <FontAwesomeIcon icon={faComments} className="me-1" />
                   Toggle Feed
                 </a>
+              </li>
+            )}
+            {props.isAuthenticated && (
+              <li className="nav-item">
+                <Link to="/my-centers" className="nav-link">
+                  <FontAwesomeIcon icon={faFlag} className="me-1" />
+                  My Centers
+                </Link>
               </li>
             )}
             {props.isAuthenticated && <EntitiesMenu />}

@@ -26,7 +26,7 @@ public class CenterTypeWrapper implements Serializable {
     private CenterType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "types", "photoUrls" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "types", "user", "photoUrls" }, allowSetters = true)
     private Center center;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

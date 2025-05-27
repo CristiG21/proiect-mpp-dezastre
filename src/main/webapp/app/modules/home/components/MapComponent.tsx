@@ -32,21 +32,23 @@ const MapComponent: React.FC<{ setError: (msg: string) => void }> = ({ setError 
         const centers = response.data;
 
         if (Array.isArray(centers)) {
-          centers.forEach((center, index) => {
-            if (center.longitude != null && center.latitude != null) {
-              const popup = new mapboxgl.Popup({
-                offset: 40,
-                anchor: 'bottom',
-                closeOnMove: false,
-                closeButton: true,
-              }).setDOMContent(createPopupContent(center.name, center.id));
+          centers
+            .filter(center => center.status === true)
+            .forEach((center, index) => {
+              if (center.longitude != null && center.latitude != null) {
+                const popup = new mapboxgl.Popup({
+                  offset: 40,
+                  anchor: 'bottom',
+                  closeOnMove: false,
+                  closeButton: true,
+                }).setDOMContent(createPopupContent(center.name, center.id));
 
-              new mapboxgl.Marker().setLngLat([center.latitude, center.longitude]).setPopup(popup).addTo(map);
-            } else {
-              console.error('Invalid center coordinates:', center);
-              setError('Invalid center coordinates received from API.');
-            }
-          });
+                new mapboxgl.Marker().setLngLat([center.latitude, center.longitude]).setPopup(popup).addTo(map);
+              } else {
+                console.error('Invalid center coordinates:', center);
+                setError('Invalid center coordinates received from API.');
+              }
+            });
         } else {
           setError('API response is not an array.');
           console.error(centers);

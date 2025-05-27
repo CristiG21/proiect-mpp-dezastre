@@ -135,6 +135,17 @@ export const Center = () => {
                   <Translate contentKey="disasterApp.center.availableSeats">Available Seats</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('availableSeats')} />
                 </th>
+                <th className="hand" onClick={sort('openTime')}>
+                  <Translate contentKey="disasterApp.center.openTime">Open Time</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('openTime')} />
+                </th>
+                <th className="hand" onClick={sort('closeTime')}>
+                  <Translate contentKey="disasterApp.center.closeTime">Close Time</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('closeTime')} />
+                </th>
+                <th>
+                  <Translate contentKey="disasterApp.center.user">User</Translate> <FontAwesomeIcon icon="sort" />
+                </th>
                 <th />
               </tr>
             </thead>
@@ -152,6 +163,9 @@ export const Center = () => {
                   <td>{center.status ? 'true' : 'false'}</td>
                   <td>{center.description}</td>
                   <td>{center.availableSeats}</td>
+                  <td>{center.openTime}</td>
+                  <td>{center.closeTime}</td>
+                  <td>{center.user ? center.user.login : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/center/${center.id}`} color="info" size="sm" data-cy="entityDetailsButton">

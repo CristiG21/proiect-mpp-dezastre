@@ -1,20 +1,27 @@
 package com.mpp.disaster.web.rest;
 
+import com.mpp.disaster.domain.Center;
 import com.mpp.disaster.domain.CenterTypeWrapper;
 import com.mpp.disaster.domain.PhotoURL;
+import com.mpp.disaster.domain.User;
 import com.mpp.disaster.domain.enumeration.CenterType;
 import com.mpp.disaster.repository.CenterRepository;
 import com.mpp.disaster.repository.CenterTypeWrapperRepository;
 import com.mpp.disaster.repository.PhotoURLRepository;
+import com.mpp.disaster.repository.UserRepository;
+import com.mpp.disaster.security.SecurityUtils;
 import com.mpp.disaster.service.CenterService;
 import com.mpp.disaster.service.dto.CenterDTO;
 import com.mpp.disaster.web.rest.errors.BadRequestAlertException;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +29,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
@@ -46,20 +54,24 @@ public class CenterResource {
 
     private final CenterRepository centerRepository;
 
-    private final CenterTypeWrapperRepository centerTypeWrapperRepository;
+    private final UserRepository userRepository;
 
     private final PhotoURLRepository photoURLRepository;
+
+    private final CenterTypeWrapperRepository centerTypeWrapperRepository;
 
     public CenterResource(
         CenterService centerService,
         CenterRepository centerRepository,
-        CenterTypeWrapperRepository centerTypeWrapperRepository,
-        PhotoURLRepository photoURLRepository
+        UserRepository userRepository,
+        PhotoURLRepository photoURLRepository,
+        CenterTypeWrapperRepository centerTypeWrapperRepository
     ) {
         this.centerService = centerService;
         this.centerRepository = centerRepository;
-        this.centerTypeWrapperRepository = centerTypeWrapperRepository;
+        this.userRepository = userRepository;
         this.photoURLRepository = photoURLRepository;
+        this.centerTypeWrapperRepository = centerTypeWrapperRepository;
     }
 
     /**
@@ -70,7 +82,7 @@ public class CenterResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("")
-    public ResponseEntity<CenterDTO> createCenter(@RequestBody CenterDTO centerDTO) throws URISyntaxException {
+    public ResponseEntity<CenterDTO> createCenter(@Valid @RequestBody CenterDTO centerDTO) throws URISyntaxException {
         LOG.debug("REST request to save Center : {}", centerDTO);
         if (centerDTO.getId() != null) {
             throw new BadRequestAlertException("A new center cannot already have an ID", ENTITY_NAME, "idexists");
@@ -94,7 +106,7 @@ public class CenterResource {
     @PutMapping("/{id}")
     public ResponseEntity<CenterDTO> updateCenter(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody CenterDTO centerDTO
+        @Valid @RequestBody CenterDTO centerDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to update Center : {}, {}", id, centerDTO);
         if (centerDTO.getId() == null) {
@@ -128,7 +140,7 @@ public class CenterResource {
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<CenterDTO> partialUpdateCenter(
         @PathVariable(value = "id", required = false) final Long id,
-        @RequestBody CenterDTO centerDTO
+        @NotNull @RequestBody CenterDTO centerDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to partial update Center partially : {}, {}", id, centerDTO);
         if (centerDTO.getId() == null) {
@@ -154,12 +166,21 @@ public class CenterResource {
      * {@code GET  /centers} : get all the centers.
      *
      * @param pageable the pagination information.
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of centers in body.
      */
     @GetMapping("")
-    public ResponseEntity<List<CenterDTO>> getAllCenters(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<CenterDTO>> getAllCenters(
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+    ) {
         LOG.debug("REST request to get a page of Centers");
-        Page<CenterDTO> page = centerService.findAll(pageable);
+        Page<CenterDTO> page;
+        if (eagerload) {
+            page = centerService.findAllWithEagerRelationships(pageable);
+        } else {
+            page = centerService.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -192,6 +213,20 @@ public class CenterResource {
             .build();
     }
 
+    @GetMapping("/my-centers")
+    @PreAuthorize("isAuthenticated()")
+    public List<Center> getMyCenters() {
+        String login = SecurityUtils.getCurrentUserLogin().orElse(null);
+        Optional<User> currentUser = userRepository.findOneByLogin(login);
+        return centerRepository.findAllByUserAndStatusTrue(currentUser.orElse(null));
+    }
+
+    @GetMapping("/{id}/photos")
+    public ResponseEntity<List<PhotoURL>> getPhotosForCenter(@PathVariable Long id) {
+        List<PhotoURL> photos = photoURLRepository.findAllByCenterId(id);
+        return ResponseEntity.ok(photos);
+    }
+
     @GetMapping("/{id}/types")
     public ResponseEntity<List<CenterType>> getCenterTypes(@PathVariable Long id) {
         List<CenterTypeWrapper> centerTypeWrappers = centerTypeWrapperRepository.findAllByCenterId(id);
@@ -200,11 +235,5 @@ public class CenterResource {
             centerTypes.add(centerTypeWrapper.getType());
         }
         return ResponseEntity.ok(centerTypes);
-    }
-
-    @GetMapping("/{id}/photos")
-    public ResponseEntity<List<PhotoURL>> getPhotosForCenter(@PathVariable Long id) {
-        List<PhotoURL> photos = photoURLRepository.findAllByCenterId(id);
-        return ResponseEntity.ok(photos);
     }
 }

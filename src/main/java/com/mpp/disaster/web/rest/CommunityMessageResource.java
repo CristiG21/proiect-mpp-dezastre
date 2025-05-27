@@ -30,7 +30,7 @@ import tech.jhipster.web.util.ResponseUtil;
 /**
  * REST controller for managing {@link com.mpp.disaster.domain.CommunityMessage}.
  */
-@PreAuthorize("hasRole('ROLE_USER')")
+
 @RestController
 @RequestMapping("/api/community-messages")
 public class CommunityMessageResource {

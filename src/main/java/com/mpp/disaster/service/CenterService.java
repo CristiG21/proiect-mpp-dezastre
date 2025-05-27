@@ -89,6 +89,15 @@ public class CenterService {
     }
 
     /**
+     * Get all the centers with eager load of many-to-many relationships.
+     *
+     * @return the list of entities.
+     */
+    public Page<CenterDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return centerRepository.findAllWithEagerRelationships(pageable).map(centerMapper::toDto);
+    }
+
+    /**
      * Get one center by id.
      *
      * @param id the id of the entity.
@@ -97,7 +106,7 @@ public class CenterService {
     @Transactional(readOnly = true)
     public Optional<CenterDTO> findOne(Long id) {
         LOG.debug("Request to get Center : {}", id);
-        return centerRepository.findById(id).map(centerMapper::toDto);
+        return centerRepository.findOneWithEagerRelationships(id).map(centerMapper::toDto);
     }
 
     /**

@@ -2,7 +2,9 @@ package com.mpp.disaster.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,9 +42,20 @@ public class Center implements Serializable {
     @Column(name = "available_seats")
     private Integer availableSeats;
 
+    @NotNull
+    @Column(name = "open_time", nullable = false)
+    private LocalTime openTime;
+
+    @NotNull
+    @Column(name = "close_time", nullable = false)
+    private LocalTime closeTime;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "center")
     @JsonIgnoreProperties(value = { "center" }, allowSetters = true)
     private Set<CenterTypeWrapper> types = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "center")
     @JsonIgnoreProperties(value = { "center" }, allowSetters = true)
@@ -141,6 +154,32 @@ public class Center implements Serializable {
         this.availableSeats = availableSeats;
     }
 
+    public LocalTime getOpenTime() {
+        return this.openTime;
+    }
+
+    public Center openTime(LocalTime openTime) {
+        this.setOpenTime(openTime);
+        return this;
+    }
+
+    public void setOpenTime(LocalTime openTime) {
+        this.openTime = openTime;
+    }
+
+    public LocalTime getCloseTime() {
+        return this.closeTime;
+    }
+
+    public Center closeTime(LocalTime closeTime) {
+        this.setCloseTime(closeTime);
+        return this;
+    }
+
+    public void setCloseTime(LocalTime closeTime) {
+        this.closeTime = closeTime;
+    }
+
     public Set<CenterTypeWrapper> getTypes() {
         return this.types;
     }
@@ -169,6 +208,19 @@ public class Center implements Serializable {
     public Center removeTypes(CenterTypeWrapper centerTypeWrapper) {
         this.types.remove(centerTypeWrapper);
         centerTypeWrapper.setCenter(null);
+        return this;
+    }
+
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Center user(User user) {
+        this.setUser(user);
         return this;
     }
 
@@ -233,6 +285,8 @@ public class Center implements Serializable {
             ", status='" + getStatus() + "'" +
             ", description='" + getDescription() + "'" +
             ", availableSeats=" + getAvailableSeats() +
+            ", openTime='" + getOpenTime() + "'" +
+            ", closeTime='" + getCloseTime() + "'" +
             "}";
     }
 }
