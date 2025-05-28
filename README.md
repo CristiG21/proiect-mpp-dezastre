@@ -24,6 +24,14 @@ password: postgres
 
 ### Step 3
 
+Navigate to application.yml and change this property to true. This will delete your database content and load the content from the JSON baseline files. Make sure you don't lose important data before doing this.
+
+```yaml
+baseline-load-enabled: true
+```
+
+### Step 4
+
 Run the following command in the parent directory to start the application.
 
 ```shell
