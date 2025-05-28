@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Flood in Arad",
+    "longitude": 21.3123,
+    "latitude": 46.1866,
+    "radius": 5.0,
+    "type": "MODERAT"
+  },
+  {
+    "name": "Earthquake near Bucharest",
+    "longitude": 26.1025,
+    "latitude": 44.4268,
+    "radius": 10.0,
+    "type": "MAJOR"
+  },
+  {
+    "name": "Chemical Spill in Cluj-Napoca",
+    "longitude": 23.594,
+    "latitude": 46.7712,
+    "radius": 3.0,
+    "type": "MINOR"
+  },
+  {
+    "name": "Wildfire near Brașov",
+    "longitude": 25.6012,
+    "latitude": 45.658,
+    "radius": 7.5,
+    "type": "CATASTROFAL"
+  },
+  {
+    "name": "Storm in Timișoara",
+    "longitude": 21.2272,
+    "latitude": 45.7489,
+    "radius": 4.0,
+    "type": "MODERAT"
+  }
+]

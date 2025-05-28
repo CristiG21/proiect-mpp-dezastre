@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Cluj Emergency Shelter",
+    "longitude": 23.594,
+    "latitude": 46.7712,
+    "status": true,
+    "description": "Emergency shelter for disaster victims in Cluj.",
+    "availableSeats": 120,
+    "openTime": "08:00:00",
+    "closeTime": "20:00:00"
+  },
+  {
+    "name": "Bucharest Relief Center",
+    "longitude": 26.1025,
+    "latitude": 44.4268,
+    "status": true,
+    "description": "Primary disaster relief center in Bucharest.",
+    "availableSeats": 200,
+    "openTime": "07:30:00",
+    "closeTime": "22:00:00"
+  },
+  {
+    "name": "Iași Community Shelter",
+    "longitude": 27.5674,
+    "latitude": 47.1585,
+    "status": false,
+    "description": "Community-run shelter for temporary housing.",
+    "availableSeats": 80,
+    "openTime": "09:00:00",
+    "closeTime": "18:00:00"
+  },
+  {
+    "name": "Timișoara Crisis Hub",
+    "longitude": 21.2257,
+    "latitude": 45.7489,
+    "status": true,
+    "description": "Center for crisis response and aid distribution.",
+    "availableSeats": 150,
+    "openTime": "06:00:00",
+    "closeTime": "23:00:00"
+  },
+  {
+    "name": "Constanța Port Aid Center",
+    "longitude": 28.6348,
+    "latitude": 44.1598,
+    "status": true,
+    "description": "Aid distribution point near the port in Constanța.",
+    "availableSeats": 100,
+    "openTime": "10:00:00",
+    "closeTime": "19:00:00"
+  }
+]

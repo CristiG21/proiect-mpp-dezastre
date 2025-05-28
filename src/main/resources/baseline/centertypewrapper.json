@@ -1,0 +1,9 @@
+[
+  { "type": "SHELTER" },
+  { "type": "MEDICAL" },
+  { "type": "FOOD" },
+  { "type": "WATER" },
+  { "type": "SANITATION" },
+  { "type": "COMMUNICATION" },
+  { "type": "TRANSPORTATION" }
+]
