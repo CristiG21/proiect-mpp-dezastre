@@ -23,7 +23,7 @@ const MapComponent: React.FC<{ setError: (msg: string) => void }> = ({ setError 
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/streets-v11',
       center: [25.0, 45.9432],
-      zoom: 6,
+      zoom: 6.5,
     });
 
     axios
@@ -43,7 +43,16 @@ const MapComponent: React.FC<{ setError: (msg: string) => void }> = ({ setError 
                   closeButton: true,
                 }).setDOMContent(createPopupContent(center.name, center.id));
 
-                new mapboxgl.Marker().setLngLat([center.latitude, center.longitude]).setPopup(popup).addTo(map);
+                new mapboxgl.Marker().setLngLat([center.longitude, center.latitude]).setPopup(popup).addTo(map);
+
+                popup.on('open', () => {
+                  map.flyTo({
+                    center: [center.longitude, center.latitude],
+                    zoom: 10,
+                    speed: 1.5,
+                    curve: 1,
+                  });
+                });
               } else {
                 console.error('Invalid center coordinates:', center);
                 setError('Invalid center coordinates received from API.');
@@ -67,7 +76,15 @@ const MapComponent: React.FC<{ setError: (msg: string) => void }> = ({ setError 
         if (Array.isArray(disasters)) {
           disasters.forEach((disaster, index) => {
             if (disaster.longitude != null && disaster.latitude != null) {
-              const circle = turf.circle([disaster.latitude, disaster.longitude], disaster.radius, {
+              const disasterColorMap = {
+                MINOR: '#ffeaa7',
+                MODERAT: '#fdcb6e',
+                MAJOR: '#ff922b',
+                CATASTROFAL: '#ff4d4f',
+              };
+              const color = disasterColorMap[disaster.type] || '#6c757d'; // default: gray
+
+              const circle = turf.circle([disaster.longitude, disaster.latitude], disaster.radius, {
                 steps: 64,
                 units: 'kilometers',
               });
@@ -82,7 +99,7 @@ const MapComponent: React.FC<{ setError: (msg: string) => void }> = ({ setError 
                 type: 'fill',
                 source: `circle-source-${index}`,
                 paint: {
-                  'fill-color': 'red',
+                  'fill-color': color,
                   'fill-opacity': 0.3,
                 },
               });
@@ -92,7 +109,7 @@ const MapComponent: React.FC<{ setError: (msg: string) => void }> = ({ setError 
                 type: 'line',
                 source: `circle-source-${index}`,
                 paint: {
-                  'line-color': 'red',
+                  'line-color': color,
                   'line-width': 2,
                 },
               });

@@ -11,9 +11,19 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 public class ApplicationProperties {
 
+    private boolean baselineLoadEnabled;
+
     private final Liquibase liquibase = new Liquibase();
 
     // jhipster-needle-application-properties-property
+
+    public boolean isBaselineLoadEnabled() {
+        return baselineLoadEnabled;
+    }
+
+    public void setBaselineLoadEnabled(boolean baselineLoadEnabled) {
+        this.baselineLoadEnabled = baselineLoadEnabled;
+    }
 
     public Liquibase getLiquibase() {
         return liquibase;
