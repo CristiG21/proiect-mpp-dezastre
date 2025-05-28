@@ -232,4 +232,4 @@ jhipster:
 # ===================================================================
 
 application:
-  baseline-load-enabled: true
+  baseline-load-enabled: false

@@ -28,7 +28,8 @@
       "closeTime": "Close Time",
       "types": "Types",
       "user": "User",
-      "photoUrl": "Photo Url"
+      "photoUrl": "Photo Url",
+      "address": "Adresă"
     }
   }
 }
