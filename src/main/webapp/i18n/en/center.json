@@ -8,7 +8,8 @@
         "createOrEditLabel": "Create or edit a Center",
         "notFound": "No Centers found",
         "feed": "Toggle feed",
-        "centers": "My Centers"
+        "centers": "My Centers",
+        "filter": "Filter"
       },
       "created": "A new Center is created with identifier {{ param }}",
       "updated": "A Center is updated with identifier {{ param }}",

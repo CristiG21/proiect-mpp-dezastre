@@ -149,7 +149,7 @@ export const CenterUpdate = () => {
     const entity = {
       ...centerEntity,
       ...values,
-      user: account,
+      user: isNew ? account : centerEntity.user,
     };
     console.error(account);
 
@@ -159,8 +159,10 @@ export const CenterUpdate = () => {
         formData.append('files', file);
       });
 
+      console.error('Uploading files:', photoFiles);
+
       try {
-        await axios.post(`/api/photos/upload/${centerId}`, formData, {
+        await axios.post(`/api/photo-urls/upload/${centerId}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
       } catch (err) {
@@ -183,7 +185,7 @@ export const CenterUpdate = () => {
       dispatch(createEntity(entity)).then(async action => {
         const saved = (action.payload as any)?.data;
         if (saved?.id) {
-          //await uploadPhotos(saved.id);
+          await uploadPhotos(saved.id);
           await saveWrappers(saved.id);
           handleClose();
         }
@@ -192,7 +194,7 @@ export const CenterUpdate = () => {
       dispatch(updateEntity(entity)).then(async action => {
         const saved = (action.payload as any)?.data;
         if (saved?.id) {
-          //await uploadPhotos(saved.id);
+          await uploadPhotos(saved.id);
           await saveWrappers(saved.id);
           handleClose();
         }

@@ -1,0 +1,75 @@
+.filter-panel-overlay {
+  position: fixed;
+  top: 70px;
+  right: 0;
+  height: calc(100vh - 70px);
+  width: 320px;
+  background-color: #fff;
+  border-left: 1px solid #e0e0e0;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border-radius: 12px 0 0 12px;
+  &.slide-in {
+    animation: slideIn 0.3s ease forwards;
+  }
+
+  &.slide-out {
+    animation: slideOut 0.3s ease forwards;
+  }
+}
+
+.filter-panel-content h4 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.filter-panel-content select,
+.filter-panel-content button {
+  width: 100%;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: all 0.2s;
+}
+
+.filter-panel-content select:focus,
+.filter-panel-content button:focus {
+  outline: none;
+  border-color: #168aad;
+}
+
+.filter-panel-content button {
+  background-color: #168aad;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}

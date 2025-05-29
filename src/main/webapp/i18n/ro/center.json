@@ -8,7 +8,8 @@
         "createOrEditLabel": "Creeare sau editare Center",
         "notFound": "No Centers found",
         "feed": "Arată feedul",
-        "centers": "Centrele mele"
+        "centers": "Centrele mele",
+        "filter": "Filtrare"
       },
       "created": "A fost creată o nouă entitate Center cu identificatorul {{ param }}",
       "updated": "Center cu identificatorul {{ param }} a fost actualizată",

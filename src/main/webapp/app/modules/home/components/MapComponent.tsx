@@ -120,7 +120,15 @@ const MapComponent: React.FC<{ setError: (msg: string) => void }> = ({ setError 
         }
       });
     });
-
+    window.addEventListener('goToTown', (e: any) => {
+      const { lat, lng } = e.detail;
+      map.flyTo({
+        center: [lng, lat],
+        zoom: 12,
+        speed: 1.5,
+        curve: 1,
+      });
+    });
     return () => map.remove();
   }, []);
 

@@ -46,12 +46,17 @@ public class PhotoURLResource {
     private final PhotoURLService photoURLService;
 
     private final PhotoURLRepository photoURLRepository;
-    private static final String UPLOAD_DIR = "/var/www/uploads/";
-    private static final String PUBLIC_URL_PREFIX = "http://localhost:8080/uploads/";
 
     public PhotoURLResource(PhotoURLService photoURLService, PhotoURLRepository photoURLRepository) {
         this.photoURLService = photoURLService;
         this.photoURLRepository = photoURLRepository;
+    }
+
+    @PostMapping("/upload/{centerId}")
+    public ResponseEntity<Void> uploadPhotos(@PathVariable Long centerId, @RequestParam("files") List<MultipartFile> files) {
+        LOG.debug("REST request to upload files for centerId : {}", centerId);
+        photoURLService.saveFiles(centerId, files);
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -71,12 +76,6 @@ public class PhotoURLResource {
         return ResponseEntity.created(new URI("/api/photo-urls/" + photoURLDTO.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, photoURLDTO.getId().toString()))
             .body(photoURLDTO);
-    }
-
-    @PostMapping("/upload")
-    public ResponseEntity<PhotoURL> create(@RequestBody PhotoURL photoURL) {
-        PhotoURL result = photoURLRepository.save(photoURL);
-        return ResponseEntity.ok(result);
     }
 
     /**

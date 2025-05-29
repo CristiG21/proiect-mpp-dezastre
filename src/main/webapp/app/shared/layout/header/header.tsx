@@ -27,6 +27,7 @@ const Header = (props: IHeaderProps) => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
   const dispatch = useAppDispatch();
+  const [filterVisible, setFilterVisible] = useState(false);
 
   const handleLocaleChange = event => {
     const langKey = event.target.value;
@@ -55,6 +56,14 @@ const Header = (props: IHeaderProps) => {
         <Collapse isOpen={menuOpen} navbar>
           <Nav id="header-tabs" className="ms-auto" navbar>
             <Home />
+            {isHomePage && (
+              <li className="nav-item">
+                <a className="nav-link" role="button" onClick={() => window.dispatchEvent(new Event('toggleFilterPanel'))}>
+                  <FontAwesomeIcon icon="filter" className="me-1" />
+                  {translate('disasterApp.center.home.filter')}
+                </a>
+              </li>
+            )}
             {isHomePage && (
               <li className="nav-item">
                 <a className="nav-link" role="button" onClick={() => window.dispatchEvent(new Event('toggleFeed'))}>
