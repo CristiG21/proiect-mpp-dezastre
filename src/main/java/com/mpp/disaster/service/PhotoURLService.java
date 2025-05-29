@@ -1,9 +1,12 @@
 package com.mpp.disaster.service;
 
+import com.mpp.disaster.domain.PhotoURL;
 import com.mpp.disaster.service.dto.PhotoURLDTO;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Service Interface for managing {@link com.mpp.disaster.domain.PhotoURL}.
@@ -55,4 +58,8 @@ public interface PhotoURLService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    List<PhotoURL> findAllByCenterId(Long centerId);
+
+    public void saveFiles(Long centerId, List<MultipartFile> files);
 }

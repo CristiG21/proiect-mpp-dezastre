@@ -25,6 +25,7 @@ public class PhotoURL implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "types", "user", "photoUrls" }, allowSetters = true)
+    @JoinColumn(name = "center_id")
     private Center center;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here

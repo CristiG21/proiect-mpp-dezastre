@@ -1,4 +1,5 @@
 import './home.scss';
+import './filter.scss';
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Alert } from 'reactstrap';
@@ -10,6 +11,8 @@ import { REDIRECT_URL } from 'app/shared/util/url-utils';
 import { IOfficialMessage } from 'app/shared/model/official-message.model';
 import { useAppSelector } from 'app/config/store';
 import axios from 'axios';
+import { translate } from 'react-jhipster';
+import { townsByCounty } from 'app/shared/constants/townsByCounty';
 
 const Home = () => {
   const [error, setError] = useState<string | null>(null);
@@ -18,6 +21,11 @@ const Home = () => {
   const [selectedMessage, setSelectedMessage] = useState<IOfficialMessage | null>(null);
   const [showFeed, setShowFeed] = useState(true);
   const pageLocation = useLocation();
+  const [showFilterPanel, setShowFilterPanel] = useState(false);
+  const [filterAnimating, setFilterAnimating] = useState(false);
+
+  const [selectedCounty, setSelectedCounty] = useState('');
+  const [selectedTown, setSelectedTown] = useState('');
   const [pendingCenters, setPendingCenters] = useState<number | null>(null);
   const [bannerDismissed, setBannerDismissed] = useState(false);
   useEffect(() => {
@@ -27,6 +35,61 @@ const Home = () => {
       location.href = `${location.origin}${redirectURL}`;
     }
   }, []);
+
+  const handleFindCity = () => {
+    if (!selectedCounty || !selectedTown) {
+      alert('Please select both a county and a city.');
+      return;
+    }
+
+    const countyTowns = townsByCounty[selectedCounty];
+    if (!countyTowns) {
+      alert('Invalid county selected.');
+      return;
+    }
+
+    const townIndex = parseInt(selectedTown, 10);
+    const town = countyTowns[townIndex];
+
+    if (!town) {
+      alert('Invalid city selected.');
+      return;
+    }
+
+    // Parse and validate latitude and longitude
+    const lat = parseFloat(town.lat);
+    const lng = parseFloat(town.lng);
+
+    if (isNaN(lat) || isNaN(lng)) {
+      console.error('Invalid town coordinates:', town);
+      alert('Selected city has invalid or missing coordinates.');
+      return;
+    }
+
+    // Dispatch the event with valid coordinates
+    const event = new CustomEvent('goToTown', {
+      detail: {
+        lat,
+        lng,
+      },
+    });
+
+    window.dispatchEvent(event);
+  };
+
+  useEffect(() => {
+    const toggle = () => {
+      if (showFilterPanel) {
+        setFilterAnimating(true);
+        setShowFilterPanel(false);
+        setTimeout(() => setFilterAnimating(false), 300); // Match SCSS animation duration
+      } else {
+        setShowFilterPanel(true);
+      }
+    };
+    window.addEventListener('toggleFilterPanel', toggle);
+    return () => window.removeEventListener('toggleFilterPanel', toggle);
+  }, [showFilterPanel]);
 
   useEffect(() => {
     const toggleFeedListener = () => setShowFeed(prev => !prev);
@@ -90,8 +153,10 @@ const Home = () => {
           >
             ×
           </button>
-          <h4>⚠️ {pendingCenters} center(s) awaiting approval</h4>
-          <p>Please review them in the admin panel.</p>
+          <h4>
+            ⚠️ {pendingCenters} {translate('disasterApp.center.toast.header')}
+          </h4>
+          <p>{translate('disasterApp.center.toast.paragraph')}</p>
           <button
             onClick={() => (window.location.href = '/center')}
             style={{
@@ -105,7 +170,7 @@ const Home = () => {
               fontWeight: 'bold',
             }}
           >
-            Go to Center Admin
+            {translate('disasterApp.center.toast.button')}
           </button>
         </div>
       )}
@@ -120,6 +185,31 @@ const Home = () => {
 
       <ToastNotification message={toastMessage} visible={showToast} />
       {selectedMessage && <MessageModal message={selectedMessage} onClose={() => setSelectedMessage(null)} />}
+      {(showFilterPanel || filterAnimating) && (
+        <div className={`filter-panel-overlay ${showFilterPanel ? 'slide-in' : 'slide-out'}`}>
+          <div className="filter-panel-content">
+            <h4>Filter by County & City</h4>
+            <select onChange={e => setSelectedCounty(e.target.value)} value={selectedCounty}>
+              <option value="">Select County</option>
+              {Object.keys(townsByCounty).map(county => (
+                <option key={county} value={county}>
+                  {county}
+                </option>
+              ))}
+            </select>
+            <select disabled={!selectedCounty} value={selectedTown} onChange={e => setSelectedTown(e.target.value)}>
+              <option value="">Select City</option>
+              {selectedCounty &&
+                townsByCounty[selectedCounty].map((city, index) => (
+                  <option key={index} value={index.toString()}>
+                    {city.name}
+                  </option>
+                ))}
+            </select>
+            <button onClick={handleFindCity}>Find</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

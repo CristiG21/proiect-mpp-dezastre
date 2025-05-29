@@ -1,11 +1,17 @@
 package com.mpp.disaster.web.rest;
 
+import com.mpp.disaster.domain.PhotoURL;
 import com.mpp.disaster.repository.PhotoURLRepository;
 import com.mpp.disaster.service.PhotoURLService;
 import com.mpp.disaster.service.dto.PhotoURLDTO;
 import com.mpp.disaster.web.rest.errors.BadRequestAlertException;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -17,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -43,6 +50,13 @@ public class PhotoURLResource {
     public PhotoURLResource(PhotoURLService photoURLService, PhotoURLRepository photoURLRepository) {
         this.photoURLService = photoURLService;
         this.photoURLRepository = photoURLRepository;
+    }
+
+    @PostMapping("/upload/{centerId}")
+    public ResponseEntity<Void> uploadPhotos(@PathVariable Long centerId, @RequestParam("files") List<MultipartFile> files) {
+        LOG.debug("REST request to upload files for centerId : {}", centerId);
+        photoURLService.saveFiles(centerId, files);
+        return ResponseEntity.ok().build();
     }
 
     /**

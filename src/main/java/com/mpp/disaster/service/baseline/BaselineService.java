@@ -50,12 +50,12 @@ public class BaselineService {
         LOG.info("Baseline Data Loading at startup is {}", isBaselineEnabled ? "enabled" : "disabled");
         if (!isBaselineEnabled) return;
 
-        reloadData(centerRepository, new TypeReference<>() {});
+        reloadData(photoURLRepository, new TypeReference<>() {});
         reloadData(centerTypeWrapperRepository, new TypeReference<>() {});
+        reloadData(centerRepository, new TypeReference<>() {});
         reloadData(communityMessageRepository, new TypeReference<>() {});
         reloadData(disasterRepository, new TypeReference<>() {});
         reloadData(officialMessageRepository, new TypeReference<>() {});
-        reloadData(photoURLRepository, new TypeReference<>() {});
     }
 
     private <T> void reloadData(JpaRepository<T, ?> repository, TypeReference<List<T>> typeRef) {

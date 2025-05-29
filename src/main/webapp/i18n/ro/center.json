@@ -3,10 +3,13 @@
     "center": {
       "home": {
         "title": "Centers",
-        "refreshListLabel": "Refresh list",
+        "refreshListLabel": "Reîncarcă lista",
         "createLabel": "Creeare o nouă entitate Center",
         "createOrEditLabel": "Creeare sau editare Center",
-        "notFound": "No Centers found"
+        "notFound": "No Centers found",
+        "feed": "Arată feedul",
+        "centers": "Centrele mele",
+        "filter": "Filtrare"
       },
       "created": "A fost creată o nouă entitate Center cu identificatorul {{ param }}",
       "updated": "Center cu identificatorul {{ param }} a fost actualizată",
@@ -17,16 +20,38 @@
       "detail": {
         "title": "Center"
       },
+      "action": {
+        "approve": "Valideaza",
+        "unapprove": "Invalizdeaza"
+      },
+      "feed": {
+        "title": "Secțiunea de știri",
+        "community": "Communitate",
+        "official": "Oficial",
+        "newMessage": "Mesaj nou",
+        "previous": "Înapoi",
+        "next": "Înainte",
+        "reply": "Răspunde",
+        "newOfficial": "Mesaj oficial nou"
+      },
+      "toast": {
+        "header": "centre care așteaptă aprobare",
+        "paragraph": "Te rog să le evaluezi în panoul de admin.",
+        "button": "Mergi la Panoul de Admin",
+        "addCenter": "✅ Mulțumim! Centrul va apărea în listă după ce va fi aprobat de un admin.",
+        "reply": "✅ Mulțumim! Răspunsul tău va apărea după aprobare.",
+        "message": "✅ Mulțumim! Mesajul tău va apărea după aprobare."
+      },
       "id": "ID",
       "name": "Name",
       "longitude": "Longitude",
       "latitude": "Latitude",
       "status": "Status",
-      "description": "Description",
-      "availableSeats": "Available Seats",
-      "openTime": "Open Time",
-      "closeTime": "Close Time",
-      "types": "Types",
+      "description": "Descriere",
+      "availableSeats": "Locuri Disponibile",
+      "openTime": "Ora de deschidere",
+      "closeTime": "Ora de închidere",
+      "types": "Tipuri",
       "user": "User",
       "photoUrl": "Photo Url",
       "address": "Adresă"

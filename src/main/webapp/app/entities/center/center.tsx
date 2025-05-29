@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
-import { JhiItemCount, JhiPagination, Translate, getPaginationState } from 'react-jhipster';
+import { JhiItemCount, JhiPagination, Translate, getPaginationState, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { getEntities } from './center.reducer';
+import { faCheck, faBan } from '@fortawesome/free-solid-svg-icons';
+import { getEntities, updateEntity } from './center.reducer';
 
 export const Center = () => {
   const dispatch = useAppDispatch();
 
   const pageLocation = useLocation();
   const navigate = useNavigate();
-
+  const account = useAppSelector(state => state.authentication.account);
+  const isAdmin = account?.authorities?.includes('ROLE_ADMIN');
   const [paginationState, setPaginationState] = useState(
     overridePaginationStateWithQueryParams(getPaginationState(pageLocation, ITEMS_PER_PAGE, 'id'), pageLocation.search),
   );
@@ -33,7 +34,14 @@ export const Center = () => {
       }),
     );
   };
-
+  const toggleStatus = center => {
+    dispatch(
+      updateEntity({
+        ...center,
+        status: !center.status,
+      }),
+    ).then(() => getAllEntities()); // Refresh the list after update
+  };
   const sortEntities = () => {
     getAllEntities();
     const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
@@ -168,6 +176,7 @@ export const Center = () => {
                   <td>{center.user ? center.user.login : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
+                      {/* Existing buttons */}
                       <Button tag={Link} to={`/center/${center.id}`} color="info" size="sm" data-cy="entityDetailsButton">
                         <FontAwesomeIcon icon="eye" />{' '}
                         <span className="d-none d-md-inline">
@@ -199,6 +208,18 @@ export const Center = () => {
                           <Translate contentKey="entity.action.delete">Delete</Translate>
                         </span>
                       </Button>
+
+                      {/* New Approve/Unapprove Button */}
+                      {isAdmin && (
+                        <Button onClick={() => toggleStatus(center)} color={center.status ? 'warning' : 'success'} size="sm">
+                          <FontAwesomeIcon icon={center.status ? faBan : faCheck} />{' '}
+                          <span className="d-none d-md-inline">
+                            {center.status
+                              ? translate('disasterApp.center.action.unapprove')
+                              : translate('disasterApp.center.action.approve')}
+                          </span>
+                        </Button>
+                      )}
                     </div>
                   </td>
                 </tr>
