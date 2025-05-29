@@ -10,6 +10,7 @@ import { REDIRECT_URL } from 'app/shared/util/url-utils';
 import { IOfficialMessage } from 'app/shared/model/official-message.model';
 import { useAppSelector } from 'app/config/store';
 import axios from 'axios';
+import { translate } from 'react-jhipster';
 
 const Home = () => {
   const [error, setError] = useState<string | null>(null);
@@ -90,8 +91,10 @@ const Home = () => {
           >
             ×
           </button>
-          <h4>⚠️ {pendingCenters} center(s) awaiting approval</h4>
-          <p>Please review them in the admin panel.</p>
+          <h4>
+            ⚠️ {pendingCenters} {translate('disasterApp.center.toast.header')}
+          </h4>
+          <p>{translate('disasterApp.center.toast.paragraph')}</p>
           <button
             onClick={() => (window.location.href = '/center')}
             style={{
@@ -105,7 +108,7 @@ const Home = () => {
               fontWeight: 'bold',
             }}
           >
-            Go to Center Admin
+            {translate('disasterApp.center.toast.button')}
           </button>
         </div>
       )}

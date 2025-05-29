@@ -1,7 +1,7 @@
 import './header.scss';
 
 import React, { useState } from 'react';
-import { Storage, Translate } from 'react-jhipster';
+import { Storage, translate, Translate } from 'react-jhipster';
 import { Collapse, Nav, Navbar, NavbarToggler } from 'reactstrap';
 import LoadingBar from 'react-redux-loading-bar';
 import { Link, useLocation } from 'react-router-dom';
@@ -59,7 +59,7 @@ const Header = (props: IHeaderProps) => {
               <li className="nav-item">
                 <a className="nav-link" role="button" onClick={() => window.dispatchEvent(new Event('toggleFeed'))}>
                   <FontAwesomeIcon icon={faComments} className="me-1" />
-                  Toggle Feed
+                  {translate('disasterApp.center.home.feed')}
                 </a>
               </li>
             )}
@@ -67,11 +67,11 @@ const Header = (props: IHeaderProps) => {
               <li className="nav-item">
                 <Link to="/my-centers" className="nav-link">
                   <FontAwesomeIcon icon={faFlag} className="me-1" />
-                  My Centers
+                  {translate('disasterApp.center.home.centers')}
                 </Link>
               </li>
             )}
-            {props.isAuthenticated && <EntitiesMenu />}
+            {props.isAuthenticated && props.isAdmin && <EntitiesMenu />}
             {props.isAuthenticated && props.isAdmin && <AdminMenu showOpenAPI={props.isOpenAPIEnabled} />}
             <LocaleMenu currentLocale={props.currentLocale} onClick={handleLocaleChange} />
             <AccountMenu isAuthenticated={props.isAuthenticated} />

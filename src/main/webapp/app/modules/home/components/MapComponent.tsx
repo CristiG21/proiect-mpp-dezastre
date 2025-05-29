@@ -68,11 +68,10 @@ const MapComponent: React.FC<{ setError: (msg: string) => void }> = ({ setError 
         setError('Error fetching centers from the API.');
       });
 
-    axios
-      .get<IDisaster[]>('/api/disasters')
-      .then(response => {
-        const disasters = response.data;
+    axios.get<IDisaster[]>('/api/disasters').then(response => {
+      const disasters = response.data;
 
+      map.once('style.load', () => {
         if (Array.isArray(disasters)) {
           disasters.forEach((disaster, index) => {
             if (disaster.longitude != null && disaster.latitude != null) {
@@ -82,7 +81,7 @@ const MapComponent: React.FC<{ setError: (msg: string) => void }> = ({ setError 
                 MAJOR: '#ff922b',
                 CATASTROFAL: '#ff4d4f',
               };
-              const color = disasterColorMap[disaster.type] || '#6c757d'; // default: gray
+              const color = disasterColorMap[disaster.type] || '#6c757d';
 
               const circle = turf.circle([disaster.longitude, disaster.latitude], disaster.radius, {
                 steps: 64,
@@ -118,15 +117,9 @@ const MapComponent: React.FC<{ setError: (msg: string) => void }> = ({ setError 
               setError('Invalid center coordinates received from API.');
             }
           });
-        } else {
-          setError('API response is not an array.');
-          console.error(disasters);
         }
-      })
-      .catch(fetchError => {
-        console.error(fetchError);
-        setError('Error fetching disasters from the API.');
       });
+    });
 
     return () => map.remove();
   }, []);

@@ -1,11 +1,17 @@
 package com.mpp.disaster.web.rest;
 
+import com.mpp.disaster.domain.PhotoURL;
 import com.mpp.disaster.repository.PhotoURLRepository;
 import com.mpp.disaster.service.PhotoURLService;
 import com.mpp.disaster.service.dto.PhotoURLDTO;
 import com.mpp.disaster.web.rest.errors.BadRequestAlertException;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -17,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -39,6 +46,8 @@ public class PhotoURLResource {
     private final PhotoURLService photoURLService;
 
     private final PhotoURLRepository photoURLRepository;
+    private static final String UPLOAD_DIR = "/var/www/uploads/";
+    private static final String PUBLIC_URL_PREFIX = "http://localhost:8080/uploads/";
 
     public PhotoURLResource(PhotoURLService photoURLService, PhotoURLRepository photoURLRepository) {
         this.photoURLService = photoURLService;
@@ -62,6 +71,12 @@ public class PhotoURLResource {
         return ResponseEntity.created(new URI("/api/photo-urls/" + photoURLDTO.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, photoURLDTO.getId().toString()))
             .body(photoURLDTO);
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<PhotoURL> create(@RequestBody PhotoURL photoURL) {
+        PhotoURL result = photoURLRepository.save(photoURL);
+        return ResponseEntity.ok(result);
     }
 
     /**

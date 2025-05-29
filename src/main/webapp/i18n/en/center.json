@@ -6,7 +6,9 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Center",
         "createOrEditLabel": "Create or edit a Center",
-        "notFound": "No Centers found"
+        "notFound": "No Centers found",
+        "feed": "Toggle feed",
+        "centers": "My Centers"
       },
       "created": "A new Center is created with identifier {{ param }}",
       "updated": "A Center is updated with identifier {{ param }}",
@@ -16,6 +18,28 @@
       },
       "detail": {
         "title": "Center"
+      },
+      "action": {
+        "approve": "Approve",
+        "unapprove": "Unapprove"
+      },
+      "feed": {
+        "title": "News feed",
+        "community": "Community",
+        "official": "Official",
+        "newMessage": "New Message",
+        "previous": "Previous",
+        "next": "Next",
+        "reply": "Reply",
+        "newOfficial": "Add Official Message"
+      },
+      "toast": {
+        "header": "center(s) awaiting approval",
+        "paragraph": "Please review them in the admin panel.",
+        "button": "Go to Center Admin",
+        "addCenter": "✅ Thank you! The center will show in the list once an admin approves it.",
+        "reply": "✅ Thanks! Your reply will appear once approved.",
+        "message": "✅ Thanks! Your message will appear once approved."
       },
       "id": "ID",
       "name": "Name",

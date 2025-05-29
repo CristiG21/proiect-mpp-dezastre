@@ -5,6 +5,7 @@ import { useAppSelector } from 'app/config/store';
 import { IOfficialMessage } from 'app/shared/model/official-message.model';
 import { getLoginUrl } from 'app/shared/util/url-utils';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { translate } from 'react-jhipster';
 
 interface NewsFeedProps {
   showFeed: boolean;
@@ -24,6 +25,7 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
 
   const navigate = useNavigate();
   const account = useAppSelector(state => state.authentication.account);
+  const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
   const location = useLocation();
 
   useEffect(() => {
@@ -95,7 +97,7 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
 
       setNewMessageContent('');
       setShowNewMessageInput(false);
-      setToastMessage('✅ Thanks! Your message will appear once approved.');
+      setToastMessage(translate('disasterApp.center.toast.message'));
       setShowToast(true);
     } catch (error) {
       console.error('Post error:', error);
@@ -131,7 +133,7 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
       );
 
       if (!newReply.approved) {
-        setToastMessage('✅ Thanks! Your reply will appear once approved.');
+        setToastMessage(translate('disasterApp.center.toast.reply'));
         setShowToast(true);
       }
     } catch (error) {
@@ -141,20 +143,20 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
 
   return (
     <div className={`side-panel ${showFeed ? 'visible' : ''}`}>
-      <h5>News Feed</h5>
+      <h5>{translate('disasterApp.center.feed.title')}</h5>
 
       <div className="tab-selector">
         <button className={activeTab === 'community' ? 'active' : ''} onClick={() => setActiveTab('community')}>
-          Community
+          {translate('disasterApp.center.feed.community')}
         </button>
         <button className={activeTab === 'official' ? 'active' : ''} onClick={() => setActiveTab('official')}>
-          Official
+          {translate('disasterApp.center.feed.official')}
         </button>
       </div>
       {activeTab === 'official' && account?.authorities?.includes('ROLE_ADMIN') && (
         <div className="new-message-wrapper">
           <button className="new-message-btn" onClick={() => navigate('official-message/new')}>
-            + Add Official Message
+            + {translate('disasterApp.center.feed.newOfficial')}
           </button>
         </div>
       )}
@@ -164,14 +166,14 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
           <button
             className="new-message-btn"
             onClick={() => {
-              if (!account?.login) {
+              if (!isAuthenticated) {
                 navigate(getLoginUrl(), { state: { from: location } });
               } else {
                 setShowNewMessageInput(true);
               }
             }}
           >
-            + New Message
+            + {translate('disasterApp.center.feed.newMessage')}
           </button>
         </div>
       )}
@@ -195,14 +197,14 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
                   <button
                     className="reply-btn"
                     onClick={() => {
-                      if (!account?.login) {
+                      if (!isAuthenticated) {
                         navigate(getLoginUrl(), { state: { from: location } });
                       } else {
                         setMessages(prev => prev.map(m => (m.id === msg.id ? { ...m, showReplyInput: !m.showReplyInput } : m)));
                       }
                     }}
                   >
-                    💬 Reply
+                    💬 {translate('disasterApp.center.feed.reply')}
                   </button>
                 </div>
                 {msg.showReplyInput && (
@@ -210,7 +212,18 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
                     <input
                       type="text"
                       value={msg.replyDraft || ''}
-                      onChange={e => setMessages(prev => prev.map(m => (m.id === msg.id ? { ...m, replyDraft: e.target.value } : m)))}
+                      onChange={e =>
+                        setMessages(prev =>
+                          prev.map(m =>
+                            m.id === msg.id
+                              ? {
+                                  ...m,
+                                  replyDraft: e.target.value,
+                                }
+                              : m,
+                          ),
+                        )
+                      }
                     />
                     <button onClick={() => postReply(msg.id, msg.replyDraft)}>Send</button>
                   </div>
@@ -240,10 +253,10 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
 
       <div className="pagination-controls">
         <button disabled={page === 0 || loadingPage} onClick={() => setPage(p => p - 1)}>
-          ◀ Previous
+          ◀ {translate('disasterApp.center.feed.previous')}
         </button>
         <button disabled={!hasMore || loadingPage} onClick={() => setPage(p => p + 1)}>
-          Next ▶
+          {translate('disasterApp.center.feed.next')} ▶
         </button>
       </div>
     </div>

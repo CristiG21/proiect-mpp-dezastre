@@ -24,11 +24,15 @@ export const CenterUpdate = () => {
   const loading = useAppSelector(state => state.center.loading);
   const updating = useAppSelector(state => state.center.updating);
   const updateSuccess = useAppSelector(state => state.center.updateSuccess);
+  const account = useAppSelector(state => state.authentication.account);
 
   const [address, setAddress] = useState(centerEntity?.address || '');
   const [latitude, setLatitude] = useState(centerEntity?.latitude || null);
   const [longitude, setLongitude] = useState(centerEntity?.longitude || null);
   const [addressSuggestions, setAddressSuggestions] = useState([]);
+  const CENTER_TYPE_ENUM = ['SHELTER', 'MEDICAL', 'FOOD', 'WATER', 'SANITATION', 'COMMUNICATION', 'TRANSPORTATION'];
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
 
   const handleAddressChange = async e => {
     const value = e.target.value;
@@ -58,11 +62,55 @@ export const CenterUpdate = () => {
     setLongitude(suggestion.center[0]);
     setAddressSuggestions([]);
   };
-
-  const handleClose = () => {
-    navigate(`/center${location.search}`);
+  const handlePhotoFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setPhotoFiles(Array.from(e.target.files));
+    }
   };
+  const handleClose = () => {
+    if (account.authorities?.includes('ROLE_ADMIN')) {
+      navigate(`/center${location.search}`);
+    } else {
+      navigate('/my-centers', {
+        state: {
+          centerCreated: true,
+        },
+      });
+    }
+  };
+  useEffect(() => {
+    if (!isNew && centerEntity) {
+      setLatitude(centerEntity.latitude);
+      setLongitude(centerEntity.longitude);
+    }
+  }, [centerEntity]);
+  useEffect(() => {
+    if (!isNew && latitude && longitude) {
+      const fetchAddressFromCoordinates = async () => {
+        try {
+          const res = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${longitude},${latitude}.json`, {
+            params: {
+              access_token: mapboxgl.accessToken,
+              limit: 1,
+            },
+          });
+          if (res.data.features?.length > 0) {
+            setAddress(res.data.features[0].place_name);
+          }
+        } catch (err) {
+          console.error('Failed to reverse geocode coordinates:', err);
+        }
+      };
 
+      fetchAddressFromCoordinates();
+    }
+  }, [isNew, latitude, longitude]);
+
+  useEffect(() => {
+    if (!isNew && centerEntity?.types) {
+      setSelectedTypes(centerEntity.types.map(t => t.type));
+    }
+  }, [centerEntity]);
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
@@ -80,31 +128,75 @@ export const CenterUpdate = () => {
   }, [updateSuccess]);
 
   const saveEntity = values => {
+    // Normalize numeric fields
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);
     }
-    // if (values.longitude !== undefined && typeof values.longitude !== 'number') {
-    //   values.longitude = Number(values.longitude);
-    // }
-    // if (values.latitude !== undefined && typeof values.latitude !== 'number') {
-    //   values.latitude = Number(values.latitude);
-    // }
+    if (values.longitude !== undefined && typeof values.longitude !== 'number') {
+      values.longitude = Number(values.longitude);
+    }
+    if (values.latitude !== undefined && typeof values.latitude !== 'number') {
+      values.latitude = Number(values.latitude);
+    }
     if (values.availableSeats !== undefined && typeof values.availableSeats !== 'number') {
       values.availableSeats = Number(values.availableSeats);
     }
+
+    // Overwrite with geocoded values if present
     values.longitude = longitude;
     values.latitude = latitude;
 
     const entity = {
       ...centerEntity,
       ...values,
-      user: users.find(it => it.id.toString() === values.user?.toString()),
+      user: account,
+    };
+    console.error(account);
+
+    const uploadPhotos = async (centerId: number) => {
+      const formData = new FormData();
+      photoFiles.forEach(file => {
+        formData.append('files', file);
+      });
+
+      try {
+        await axios.post(`/api/photos/upload/${centerId}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+      } catch (err) {
+        console.error('Failed to upload photos:', err);
+      }
+    };
+
+    const saveWrappers = centerId => {
+      const wrapperRequests = selectedTypes.map(type =>
+        axios.post('/api/center-type-wrappers', {
+          center: { id: centerId },
+          type,
+        }),
+      );
+
+      return Promise.all(wrapperRequests);
     };
 
     if (isNew) {
-      dispatch(createEntity(entity));
+      dispatch(createEntity(entity)).then(async action => {
+        const saved = (action.payload as any)?.data;
+        if (saved?.id) {
+          //await uploadPhotos(saved.id);
+          await saveWrappers(saved.id);
+          handleClose();
+        }
+      });
     } else {
-      dispatch(updateEntity(entity));
+      dispatch(updateEntity(entity)).then(async action => {
+        const saved = (action.payload as any)?.data;
+        if (saved?.id) {
+          //await uploadPhotos(saved.id);
+          await saveWrappers(saved.id);
+          handleClose();
+        }
+      });
     }
   };
 
@@ -114,6 +206,7 @@ export const CenterUpdate = () => {
       : {
           ...centerEntity,
           user: centerEntity?.user?.id,
+          types: centerEntity.types || [],
         };
 
   return (
@@ -227,6 +320,35 @@ export const CenterUpdate = () => {
                   required: { value: true, message: translate('entity.validation.required') },
                 }}
               />
+              <div className="mb-3">
+                <label className="form-label">{translate('disasterApp.center.types')}</label>
+                <div role="group" aria-labelledby="center-types">
+                  {CENTER_TYPE_ENUM.map(type => (
+                    <div className="form-check" key={type}>
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id={`type-${type}`}
+                        value={type}
+                        checked={selectedTypes.includes(type)}
+                        onChange={e => {
+                          const updatedTypes = e.target.checked ? [...selectedTypes, type] : selectedTypes.filter(t => t !== type);
+                          setSelectedTypes(updatedTypes);
+                        }}
+                      />
+                      <label className="form-check-label" htmlFor={`type-${type}`}>
+                        {type.charAt(0) + type.slice(1).toLowerCase()}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="mb-3">
+                <label htmlFor="center-image" className="form-label">
+                  Upload Center Image
+                </label>
+                <input type="file" id="center-image" accept="image/*" className="form-control" multiple onChange={handlePhotoFilesChange} />
+              </div>
               {/* <ValidatedField id="center-user" name="user" data-cy="user" label={translate('disasterApp.center.user')} type="select">*/}
               {/*  <option value="" key="0" />*/}
               {/*  {users*/}

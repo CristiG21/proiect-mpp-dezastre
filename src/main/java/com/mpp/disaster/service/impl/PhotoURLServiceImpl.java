@@ -5,6 +5,7 @@ import com.mpp.disaster.repository.PhotoURLRepository;
 import com.mpp.disaster.service.PhotoURLService;
 import com.mpp.disaster.service.dto.PhotoURLDTO;
 import com.mpp.disaster.service.mapper.PhotoURLMapper;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,5 +81,11 @@ public class PhotoURLServiceImpl implements PhotoURLService {
     public void delete(Long id) {
         LOG.debug("Request to delete PhotoURL : {}", id);
         photoURLRepository.deleteById(id);
+    }
+
+    @Override
+    public List<PhotoURL> findAllByCenterId(Long centerId) {
+        LOG.debug("Getting the PhotoURL for : {}", centerId);
+        return photoURLRepository.findAllByCenterId(centerId);
     }
 }
