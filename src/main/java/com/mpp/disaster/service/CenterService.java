@@ -4,6 +4,8 @@ import com.mpp.disaster.domain.Center;
 import com.mpp.disaster.repository.CenterRepository;
 import com.mpp.disaster.service.dto.CenterDTO;
 import com.mpp.disaster.service.mapper.CenterMapper;
+import jakarta.persistence.EntityNotFoundException;
+import java.time.LocalTime;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,5 +119,25 @@ public class CenterService {
     public void delete(Long id) {
         LOG.debug("Request to delete Center : {}", id);
         centerRepository.deleteById(id);
+    }
+
+    public boolean isCenterOpenNow(Long centerId) {
+        Optional<Center> centerOpt = centerRepository.findById(centerId);
+        if (centerOpt.isEmpty()) {
+            throw new EntityNotFoundException("Center not found with id: " + centerId);
+        }
+
+        Center center = centerOpt.get();
+        LocalTime now = LocalTime.now();
+
+        LocalTime open = center.getOpenTime();
+        LocalTime close = center.getCloseTime();
+
+        if (open.isBefore(close)) {
+            return !now.isBefore(open) && !now.isAfter(close);
+        } else {
+            LOG.debug("is open");
+            return !now.isBefore(open) || !now.isAfter(close);
+        }
     }
 }

@@ -236,4 +236,10 @@ public class CenterResource {
         }
         return ResponseEntity.ok(centerTypes);
     }
+
+    @GetMapping("/{id}/is-open")
+    public ResponseEntity<Boolean> isCenterOpen(@PathVariable Long id) {
+        boolean isOpen = centerService.isCenterOpenNow(id);
+        return ResponseEntity.ok(isOpen);
+    }
 }

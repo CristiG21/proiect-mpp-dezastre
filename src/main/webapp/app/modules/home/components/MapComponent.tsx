@@ -36,23 +36,38 @@ const MapComponent: React.FC<{ setError: (msg: string) => void }> = ({ setError 
             .filter(center => center.status === true)
             .forEach((center, index) => {
               if (center.longitude != null && center.latitude != null) {
-                const popup = new mapboxgl.Popup({
-                  offset: 40,
-                  anchor: 'bottom',
-                  closeOnMove: false,
-                  closeButton: true,
-                }).setDOMContent(createPopupContent(center.name, center.id));
+                axios
+                  .get<boolean>(`/api/centers/${center.id}/is-open`)
+                  .then(isOpenResponse => {
+                    const isOpen = isOpenResponse.data;
 
-                new mapboxgl.Marker().setLngLat([center.longitude, center.latitude]).setPopup(popup).addTo(map);
+                    const popup = new mapboxgl.Popup({
+                      offset: 40,
+                      anchor: 'bottom',
+                      closeOnMove: false,
+                      closeButton: true,
+                    }).setDOMContent(createPopupContent(center.name, center.id));
 
-                popup.on('open', () => {
-                  map.flyTo({
-                    center: [center.longitude, center.latitude],
-                    zoom: 10,
-                    speed: 1.5,
-                    curve: 1,
+                    const marker = new mapboxgl.Marker({
+                      color: isOpen ? '#007bff' : '#dc3545', // albastru dacă e deschis, roșu dacă nu
+                    })
+                      .setLngLat([center.longitude, center.latitude])
+                      .setPopup(popup)
+                      .addTo(map);
+
+                    popup.on('open', () => {
+                      map.flyTo({
+                        center: [center.longitude, center.latitude],
+                        zoom: 10,
+                        speed: 1.5,
+                        curve: 1,
+                      });
+                    });
+                  })
+                  .catch(error => {
+                    console.error(`Error checking center ${center.id} status:`, error);
+                    setError('Failed to determine if center is open.');
                   });
-                });
               } else {
                 console.error('Invalid center coordinates:', center);
                 setError('Invalid center coordinates received from API.');
