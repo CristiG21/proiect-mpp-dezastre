@@ -1,0 +1,91 @@
+/* custom.css */
+
+/* 1) Use Roboto everywhere */
+body,
+input,
+button,
+select,
+textarea {
+  font-family: 'Roboto', sans-serif;
+}
+
+/* 2) Light gray background (Bootstrap “bg-light” = #f8f9fa) */
+body {
+  background-color: #f8f9fa;
+}
+
+/* 3) Tweak card corners and shadow */
+.card {
+  border-radius: 1rem; /* 16px corners for a “pill” feel */
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1); /* softer, larger shadow */
+}
+
+/* 4) Remove any border from the header so it blends into the card */
+.card-header {
+  background-color: transparent;
+  border-bottom: none;
+}
+
+/* 5) Make inputs extra rounded and bigger */
+.form-control {
+  border: 1px solid #ced4da;
+  border-radius: 0.75rem; /* 12px corners */
+  box-shadow: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+/* On focus: slightly darker border + blue glow */
+.form-control:focus {
+  border-color: #0056b3; /* a deeper blue */
+  box-shadow: 0 0 0 0.25rem rgba(0, 86, 179, 0.25);
+}
+
+/* 6) Bigger primary button styling */
+.btn-primary {
+  background-color: #0056b3; /* darken the “primary” color */
+  border-color: #004085;
+  border-radius: 0.75rem; /* 12px corners */
+  font-weight: 500;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+}
+
+/* On hover/focus: lighten up */
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #004085;
+  border-color: #002752;
+  box-shadow: none;
+}
+
+/* 7) Tweak link hover to add subtle underline */
+a.text-decoration-none:hover {
+  color: #004085;
+  text-decoration: underline;
+}
+
+/* 8) Larger checkbox for “Remember Me” */
+.form-check-input {
+  width: 1.4rem;
+  height: 1.4rem;
+  margin-top: 0.15rem;
+}
+
+/* 9) Extra spacing adjustments */
+.card-body {
+  padding-left: 2rem !important;
+  padding-right: 2rem !important;
+  padding-bottom: 2rem !important;
+}
+
+/* On very small screens, reduce padding to keep card from being too tall */
+@media (max-width: 576px) {
+  .card-body {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+}
