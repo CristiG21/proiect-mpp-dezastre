@@ -44,6 +44,9 @@ public class BaselineService {
     @Autowired
     private PhotoURLRepository photoURLRepository;
 
+    @Autowired
+    private ReviewRepository reviewRepository;
+
     @PostConstruct
     public void init() {
         boolean isBaselineEnabled = applicationProperties.isBaselineLoadEnabled();
@@ -52,10 +55,11 @@ public class BaselineService {
 
         reloadData(photoURLRepository, new TypeReference<>() {});
         reloadData(centerTypeWrapperRepository, new TypeReference<>() {});
-        reloadData(centerRepository, new TypeReference<>() {});
+        reloadData(reviewRepository, new TypeReference<>() {});
         reloadData(communityMessageRepository, new TypeReference<>() {});
         reloadData(disasterRepository, new TypeReference<>() {});
         reloadData(officialMessageRepository, new TypeReference<>() {});
+        reloadData(centerRepository, new TypeReference<>() {});
     }
 
     private <T> void reloadData(JpaRepository<T, ?> repository, TypeReference<List<T>> typeRef) {

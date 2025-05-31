@@ -14,6 +14,10 @@ import axios from 'axios';
 import { translate } from 'react-jhipster';
 import { townsByCounty } from 'app/shared/constants/townsByCounty';
 
+import { useWebSocket } from 'app/shared/websocket/useWebSocket';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 const Home = () => {
   const [error, setError] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -28,6 +32,8 @@ const Home = () => {
   const [selectedTown, setSelectedTown] = useState('');
   const [pendingCenters, setPendingCenters] = useState<number | null>(null);
   const [bannerDismissed, setBannerDismissed] = useState(false);
+
+  const account = useAppSelector(state => state.authentication.account);
   useEffect(() => {
     const redirectURL = localStorage.getItem(REDIRECT_URL);
     if (redirectURL) {
@@ -96,8 +102,6 @@ const Home = () => {
     window.addEventListener('toggleFeed', toggleFeedListener);
     return () => window.removeEventListener('toggleFeed', toggleFeedListener);
   }, []);
-
-  const account = useAppSelector(state => state.authentication.account);
 
   useEffect(() => {
     const fetchPendingCenters = async () => {
