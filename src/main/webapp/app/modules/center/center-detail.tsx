@@ -4,8 +4,10 @@ import axios from 'axios';
 import { ICenter } from 'app/shared/model/center.model';
 import { IPhotoURL } from 'app/shared/model/photo-url.model';
 import { Alert } from 'reactstrap';
-import { ICenterTypeWrapper } from 'app/shared/model/center-type-wrapper.model';
 import { CenterType } from 'app/shared/model/enumerations/center-type.model';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import PhotoCarousel from './photo-carousel';
 
 export const CenterDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,111 +21,171 @@ export const CenterDetail = () => {
     axios
       .get<ICenter>(`/api/centers/${id}`)
       .then(response => setCenter(response.data))
-      .catch(err => {
-        console.error(err);
-        setError('Could not fetch center details.');
-      });
+      .catch(err => setError('Could not fetch center details.'));
 
     // Fetch associated photos
     axios
       .get<IPhotoURL[]>(`/api/centers/${id}/photos`)
       .then(response => setPhotos(response.data))
-      .catch(err => {
-        console.error(err);
-      });
+      .catch(console.error);
 
     // Fetch associated center types
     axios
       .get<CenterType[]>(`/api/centers/${id}/types`)
       .then(response => setCenterTypes(response.data))
-      .catch(err => {
-        console.error(err);
-      });
+      .catch(console.error);
   }, [id]);
 
   if (error) {
-    return <Alert color="danger">{error}</Alert>;
+    return (
+      <Alert color="danger" style={{ margin: '20px auto', maxWidth: '600px' }}>
+        {error}
+      </Alert>
+    );
   }
 
   if (!center) {
-    return <div>Loading...</div>;
+    return <div style={{ textAlign: 'center', marginTop: '50px', fontSize: '1.5rem' }}>Loading...</div>;
   }
 
+  // Config for react-slick carousel
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
+
   return (
-    <div style={{ padding: '30px', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '20px', textAlign: 'center' }}>{center.name}</h1>
+    <div style={{ padding: '40px', maxWidth: '1200px', margin: '0 auto', color: '#333' }}>
+      {/* Page Header */}
+      <header style={{ textAlign: 'center', marginBottom: '30px' }}>
+        <h1 style={{ fontSize: '2.8rem', fontWeight: 'bold', color: '#1a237e' }}>{center.name}</h1>
+      </header>
 
-      {/* Description */}
-      {center.description && (
-        <p style={{ fontSize: '1.2rem', lineHeight: '1.6', marginBottom: '15px', textAlign: 'center' }}>
-          <strong>Description:</strong> {center.description}
-        </p>
-      )}
-
-      {/* Available Seats */}
-      {center.availableSeats != null && (
-        <p style={{ fontSize: '1.2rem', marginBottom: '15px', textAlign: 'center' }}>
-          <strong>Available Seats:</strong> {center.availableSeats}
-        </p>
-      )}
-
-      {/* Center Types */}
-      <p style={{ fontSize: '1.2rem', marginBottom: '30px', textAlign: 'center' }}>
-        <strong>Types:</strong>{' '}
-        {centerTypes.length > 0 ? (
-          centerTypes.map((type, index) => (
-            <span
-              key={index}
-              style={{
-                backgroundColor: '#e0e0e0',
-                color: 'black',
-                padding: '5px 10px',
-                borderRadius: '12px',
-                marginRight: '5px',
-                fontWeight: 'bold',
-              }}
-            >
-              {type}
-            </span>
-          ))
-        ) : (
-          <span className="text-muted">No types</span>
+      {/* Center Info */}
+      <section>
+        {center.description && (
+          <div style={{ textAlign: 'center', marginBottom: '30px', lineHeight: '1.6' }}>
+            <p style={{ fontSize: '1.3rem', color: '#424242', padding: '0 20px' }}>
+              <strong>Description:</strong> {center.description}
+            </p>
+          </div>
         )}
-      </p>
 
-      {/* Photos */}
-      {photos.length > 0 && (
-        <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center' }}>
-          {photos.map((photo, index) => (
+        <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', marginBottom: '30px' }}>
+          {center.openTime && center.closeTime && (
             <div
-              key={photo.id ?? index}
               style={{
-                overflow: 'hidden',
-                borderRadius: '12px',
-                boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
-                transition: 'transform 0.3s',
-                width: '300px',
-                height: '200px',
+                flex: '1 1 45%',
+                padding: '15px',
+                margin: '10px',
+                border: '1px solid #e0e0e0',
+                borderRadius: '8px',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
               }}
             >
-              <img
-                src={photo.url || ''}
-                alt={`Photo ${index + 1}`}
+              <p
                 style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  transition: 'transform 0.3s',
+                  textAlign: 'center',
+                  fontSize: '1.2rem',
+                  margin: '0',
+                  color: '#0277bd',
+                  fontWeight: 'bold',
                 }}
-                onMouseOver={e => (e.currentTarget.style.transform = 'scale(1.05)')}
-                onMouseOut={e => (e.currentTarget.style.transform = 'scale(1.0)')}
-              />
+              >
+                Operating Hours
+              </p>
+              <p style={{ textAlign: 'center', marginTop: '10px' }}>
+                {center.openTime} - {center.closeTime}
+              </p>
             </div>
-          ))}
-        </div>
-      )}
+          )}
 
-      {photos.length === 0 && (
+          {center.availableSeats != null && (
+            <div
+              style={{
+                flex: '1 1 45%',
+                padding: '15px',
+                margin: '10px',
+                border: '1px solid #e0e0e0',
+                borderRadius: '8px',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+              }}
+            >
+              <p
+                style={{
+                  textAlign: 'center',
+                  fontSize: '1.2rem',
+                  margin: '0',
+                  color: '#2e7d32',
+                  fontWeight: 'bold',
+                }}
+              >
+                Available Seats
+              </p>
+              <p style={{ textAlign: 'center', marginTop: '10px' }}>{center.availableSeats}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Center Types */}
+        <div
+          style={{
+            marginBottom: '40px',
+            padding: '10px 20px',
+            border: '1px solid #e0e0e0',
+            borderRadius: '8px',
+            backgroundColor: '#f5f5f5',
+          }}
+        >
+          <p style={{ fontSize: '1.2rem', marginBottom: '15px', color: '#3e2723', fontWeight: 'bold' }}>
+            <strong>Types: </strong>
+          </p>
+          {centerTypes.length > 0 ? (
+            centerTypes.map((type, index) => (
+              <span
+                key={index}
+                style={{
+                  marginRight: '10px',
+                  backgroundColor: '#e3f2fd',
+                  color: '#0d47a1',
+                  padding: '5px 10px',
+                  fontSize: '1rem',
+                  borderRadius: '8px',
+                  fontWeight: 'bold',
+                }}
+              >
+                {type}
+              </span>
+            ))
+          ) : (
+            <span style={{ fontStyle: 'italic', color: '#9e9e9e' }}>No types available</span>
+          )}
+        </div>
+      </section>
+
+      {/* Photo Carousel */}
+      {photos.length > 0 ? (
+        <PhotoCarousel photos={photos} />
+      ) : (
         <p style={{ textAlign: 'center', fontStyle: 'italic', marginTop: '20px' }}>No photos available for this center.</p>
       )}
     </div>
