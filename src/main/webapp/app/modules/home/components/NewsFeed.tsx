@@ -59,15 +59,30 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
 
         if (activeTab === 'official') {
           const res = await axios.get('/api/official-messages', {
-            params: { page, size: 1 },
+            params: { page, size: 2 },
           });
 
-          const officialMessages = Array.isArray(res.data.content) ? res.data.content : Array.isArray(res.data) ? res.data : [];
+          let officialMessages: any[] = [];
+
+          if (Array.isArray(res.data.content)) {
+            officialMessages = res.data.content;
+          } else if (Array.isArray(res.data)) {
+            officialMessages = res.data;
+          } else {
+            officialMessages = [];
+          }
 
           const mapped = officialMessages.map(msg => ({ ...msg, type: 'OFFICIAL' }));
           setMessages(mapped);
-          const totalPages = res.data.totalPages ?? 1;
-          setHasMore(page < totalPages); // official messages aren't paginated
+
+          if (res.data.totalPages !== undefined) {
+            setHasMore(page + 1 < res.data.totalPages);
+          } else if (res.data.last !== undefined) {
+            setHasMore(!res.data.last);
+          } else {
+            // fallback logic: assume no more if response is not paged
+            setHasMore(officialMessages.length === 1); // assumes 1-per-page
+          }
         }
       } catch (err) {
         console.error('Failed to fetch messages:', err);
@@ -84,9 +99,11 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
   const postCommunityMessage = async () => {
     const content = newMessageContent.trim();
     if (!content) return;
+
     const isAdmin = account?.authorities?.includes('ROLE_ADMIN');
+
     try {
-      await axios.post('/api/community-messages', {
+      const response = await axios.post('/api/community-messages', {
         content,
         time_posted: new Date().toISOString(),
         approved: isAdmin,
@@ -95,10 +112,24 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
         replies: [],
       });
 
+      const newMessage = response.data;
+
       setNewMessageContent('');
       setShowNewMessageInput(false);
-      setToastMessage(translate('disasterApp.center.toast.message'));
-      setShowToast(true);
+
+      if (isAdmin) {
+        const enrichedMessage = {
+          ...newMessage,
+          type: 'COMMUNITY',
+          replies: [],
+          showReplyInput: false,
+          replyDraft: '',
+        };
+        setMessages(prev => [enrichedMessage, ...prev]);
+      } else {
+        setToastMessage(translate('disasterApp.center.toast.message'));
+        setShowToast(true);
+      }
     } catch (error) {
       console.error('Post error:', error);
     }
@@ -107,11 +138,13 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
   const postReply = async (msgId: number, content: string) => {
     if (!content) return;
 
+    const isAdmin = account?.authorities?.includes('ROLE_ADMIN');
+
     try {
       const response = await axios.post('/api/community-messages', {
         content,
         time_posted: new Date().toISOString(),
-        approved: false,
+        approved: isAdmin,
         parent: { id: msgId },
         user: { id: account.id, login: account.login },
         replies: [],
@@ -126,13 +159,13 @@ const NewsFeed: React.FC<NewsFeedProps> = ({ showFeed, setShowToast, setToastMes
                 ...m,
                 showReplyInput: false,
                 replyDraft: '',
-                replies: newReply.approved ? [...(m.replies || []), newReply] : m.replies,
+                replies: isAdmin ? [...(m.replies || []), newReply] : m.replies,
               }
             : m,
         ),
       );
 
-      if (!newReply.approved) {
+      if (!isAdmin) {
         setToastMessage(translate('disasterApp.center.toast.reply'));
         setShowToast(true);
       }
