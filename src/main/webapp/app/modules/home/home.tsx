@@ -14,7 +14,6 @@ import axios from 'axios';
 import { translate } from 'react-jhipster';
 import { townsByCounty } from 'app/shared/constants/townsByCounty';
 
-import { useWebSocket } from 'app/shared/websocket/useWebSocket';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
