@@ -1,5 +1,5 @@
 <p align="center">
-   <img src="uploads/placeholder_project_logo.png" alt="Project Logo" width="120" />
+   <img src="src\main\docker\keycloak-themes\blackbox-theme\login\resources\img\logo.png" alt="Project Logo" width="120" />
 </p>
 
 # 🌐 Disaster Management Platform
