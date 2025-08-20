@@ -117,7 +117,6 @@ DisasterApp is a comprehensive web-based disaster management platform designed t
 <p align="center">
    <img src="uploads/placeholder_screenshot_1.png" alt="Screenshot 1" width="400" />
    <img src="uploads/placeholder_screenshot_2.png" alt="Screenshot 2" width="400" />
-   <img src="uploads/placeholder_screenshot_3.png" alt="Screenshot 3" width="400" />
 </p>
 
 ---
