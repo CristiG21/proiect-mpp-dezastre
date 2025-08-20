@@ -13,7 +13,8 @@
         "disaster": "Disaster",
         "communityMessage": "Community Message",
         "photoUrl": "Photo URL",
-        "officialMessage": "Official Message"
+        "officialMessage": "Official Message",
+        "review": "Review"
       },
       "account": {
         "main": "Account",

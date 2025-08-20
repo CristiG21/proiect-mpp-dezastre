@@ -74,7 +74,7 @@ const Header = (props: IHeaderProps) => {
             )}
             {props.isAuthenticated && (
               <li className="nav-item">
-                <Link to="/my-centers" className="nav-link">
+                <Link to={props.isAdmin ? '/center' : '/my-centers'} className="nav-link">
                   <FontAwesomeIcon icon={faFlag} className="me-1" />
                   {translate('disasterApp.center.home.centers')}
                 </Link>
